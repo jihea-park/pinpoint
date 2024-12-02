@@ -40,6 +40,11 @@ interface GuideEventHandlers {
   [key: string]: GuideEventCallback<GuideEventTypes>;
 }
 
+const dragBuffer = {
+  x: 20,
+  y: 20,
+};
+
 export class Guide extends Layer {
   private wrapper;
   private isMouseDown = false;
@@ -60,6 +65,7 @@ export class Guide extends Layer {
     this.canvas.style.top = '0px';
     this.canvas.style.left = '0px';
     this.canvas.style.background = 'transparent';
+    this.canvas.style.border = '1px solid black';
     this.option = props.option;
     this.setOptions(props);
     this.wrapper = wrapper;
@@ -153,9 +159,9 @@ export class Guide extends Layer {
           const maxY = this.yAxis.max;
           const xPadding = this.padding.left + this.xAxis.innerPadding;
           const yPadding = this.padding.top + this.yAxis.innerPadding;
-          const startX = (this.dragStartX - xPadding) / this.ratio.x + minX;
+          const startX = (this.dragStartX - xPadding) / this.ratio.x + minX - dragBuffer.x / this.ratio.x;
           const startY = maxY - (this.dragStartY - yPadding) / this.ratio.y;
-          const endX = (offsetX - xPadding) / this.ratio.x + minX;
+          const endX = (offsetX - xPadding) / this.ratio.x + minX - dragBuffer.x / this.ratio.x;
           const endY = maxY - (offsetY - yPadding) / this.ratio.y;
           let x1, x2, y1, y2;
 
@@ -196,7 +202,7 @@ export class Guide extends Layer {
           const yPadding = this.padding.top + this.yAxis.innerPadding;
 
           this.eventHandlers['click']?.(event, {
-            x: (offsetX - xPadding) / this.ratio.x + this.xAxis.min,
+            x: (offsetX - xPadding) / this.ratio.x + this.xAxis.min - dragBuffer.x / this.ratio.x,
             y: this.yAxis.max - (offsetY - yPadding) / this.ratio.y,
           });
         }
@@ -210,8 +216,8 @@ export class Guide extends Layer {
     const { padding, context, canvas, ratio, xAxis, yAxis } = this;
     const { color, backgroundColor, strokeColor, font } = this.option;
 
-    const height = canvas.height / this.dpr;
-    const xText = `${xAxis.tick?.format!((x - padding.left - xAxis.innerPadding) / ratio.x + xAxis.min)}`;
+    const height = canvas.height / this.dpr - dragBuffer.y;
+    const xText = `${xAxis.tick?.format!((x - padding.left - xAxis.innerPadding - dragBuffer.x) / ratio.x + xAxis.min)}`;
     const xTextLines = `${xText}`.split('\n');
     const yText = `${yAxis.tick?.format!(
       Math.floor(Math.abs((height - padding.bottom - yAxis.innerPadding - y) / ratio.y + yAxis.min)),
@@ -237,7 +243,9 @@ export class Guide extends Layer {
       xTextHeight + xAxis.tick!.padding!.top! + xAxis.tick!.padding!.bottom!,
       { color: backgroundColor },
     );
-    drawLine(context, padding.left - xAxis.tick!.width!, y, padding.left, y, { color: strokeColor });
+    drawLine(context, x, height - padding.bottom, x, height - padding.bottom + yAxis.tick!.width!, {
+      color: strokeColor,
+    });
 
     xTextLines.reverse().forEach((xLine, i) => {
       drawText(
@@ -255,16 +263,29 @@ export class Guide extends Layer {
     });
 
     // y
-    drawRect(context, padding.left - yAxis.tick!.width! - yRectWidth, y - yRectHeight / 2, yRectWidth, yRectHeight, {
-      color: backgroundColor,
-    });
-    drawLine(context, x, height - padding.bottom, x, height - padding.bottom + yAxis.tick!.width!, {
+    drawRect(
+      context,
+      padding.left - yAxis.tick!.width! - yRectWidth + dragBuffer.x,
+      y - yRectHeight / 2,
+      yRectWidth,
+      yRectHeight,
+      {
+        color: backgroundColor,
+      },
+    );
+    drawLine(context, padding.left - xAxis.tick!.width! + dragBuffer.x, y, padding.left + dragBuffer.x, y, {
       color: strokeColor,
     });
-    drawText(context, yText, padding.left - yAxis.tick!.width! - yAxis.tick!.padding!.right!, y + yTextHeight / 4, {
-      color,
-      textAlign: 'end',
-    });
+    drawText(
+      context,
+      yText,
+      padding.left - yAxis.tick!.width! - yAxis.tick!.padding!.right! + dragBuffer.x,
+      y + yTextHeight / 4,
+      {
+        color,
+        textAlign: 'end',
+      },
+    );
   }
 
   public setOptions({
@@ -275,7 +296,9 @@ export class Guide extends Layer {
     xAxis = this.xAxis,
     yAxis = this.yAxis,
   }) {
-    super.setSize(width, height);
+    // super.setSize(width, height);
+    super.setSize(width + dragBuffer.x * 2, height + dragBuffer.y);
+    this.canvas.style.margin = `0px -${dragBuffer.x}px`;
     this.padding = { ...this.padding, ...padding };
     this.ratio = cloneDeep(ratio);
     this.xAxis = cloneDeep(xAxis);
