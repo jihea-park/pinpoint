@@ -23,13 +23,33 @@ export const FlameGraph = <T,>({
 }: FlameGraphProps<T>) => {
   const widthOffset = end - start || 1;
   const [config] = React.useState(flameGraphDefaultConfig);
+  const [zoom, setZoom] = React.useState(1);
 
   const prevDepth = React.useRef(0);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const svgRef = React.useRef<SVGSVGElement>(null);
-  const [containerWidth, setWidth] = React.useState(0);
+  const [width, setWidth] = React.useState(0);
   const containerHeight = getContainerHeight();
+  const containerWidth = width * zoom;
   const widthRatio = (containerWidth - config.padding.left - config.padding.right) / widthOffset;
+
+  console.log('zoom', zoom);
+  React.useEffect(() => {
+    const handleWheel = (event: { metaKey: any; preventDefault: () => void; deltaY: number }) => {
+      if (event.metaKey) {
+        event.preventDefault();
+        setZoom((prevZoom) => Math.max(1, prevZoom - event.deltaY * 0.01));
+      }
+    };
+
+    const container = containerRef.current;
+
+    container?.addEventListener('wheel', handleWheel);
+
+    return () => {
+      container?.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
 
   React.useEffect(() => {
     if (containerRef.current) {
@@ -90,11 +110,11 @@ export const FlameGraph = <T,>({
 
   return (
     <FlameGraphConfigContext.Provider value={{ config }}>
-      <div className="relative w-full h-full overflow-x-hidden" ref={containerRef}>
+      <div className="relative w-full h-full overflow-x-auto" ref={containerRef}>
         <svg width={containerWidth} height={config.height.timeline} className="shadow-md">
           <FlameTimeline width={containerWidth} start={start} end={end} />
         </svg>
-        <div className="w-full h-[calc(100%-3rem)] overflow-y-auto overflow-x-hidden">
+        <div className="w-fit h-[calc(100%-3rem)] overflow-y-auto overflow-x-hidden">
           <svg width={containerWidth} height={containerHeight} ref={svgRef}>
             <FlameAxis width={containerWidth} />
             {containerWidth &&

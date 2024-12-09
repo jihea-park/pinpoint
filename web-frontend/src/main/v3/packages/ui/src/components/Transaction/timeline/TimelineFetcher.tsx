@@ -10,25 +10,29 @@ import { FlameNodeType } from '../../FlameGraph/FlameNode';
 import { LuMoveDown, LuMoveUp } from 'react-icons/lu';
 import { Button, Input } from '../..';
 import { colors } from '../../../constant';
+import { traceViewData, transactionInfo } from './mockData';
 
 export interface TimelineFetcherProps {
   transactionInfo?: TransactionInfo.Response;
 }
 
-export const TimelineFetcher = ({ transactionInfo }: TimelineFetcherProps) => {
-  const { transactionInfo: transactionSearchParams } = useTransactionSearchParameters();
+export const TimelineFetcher = ({ transactionInfo: _transactionInfo }: TimelineFetcherProps) => {
+  const data = traceViewData;
+  // const { transactionInfo: transactionSearchParams } = useTransactionSearchParameters();
   const [selectedTrace, setSelectedTrace] = React.useState<TraceViewerData.TraceEvent>();
   const [input, setInput] = React.useState('');
   const [searchInput, setSearchInput] = React.useState('');
   const [focusedNodeId, setFocusedNodeId] = React.useState<string>();
 
-  const { data } = useGetTraceViewerData({
-    traceId: transactionInfo?.transactionId,
-    spanId: `${transactionInfo?.spanId}`,
-    agentId: transactionInfo?.agentId,
-    focusTimestamp: transactionSearchParams?.focusTimestamp,
-  });
+  // const { data } = useGetTraceViewerData({
+  //   traceId: transactionInfo?.transactionId,
+  //   spanId: `${transactionInfo?.spanId}`,
+  //   agentId: transactionInfo?.agentId,
+  //   focusTimestamp: transactionSearchParams?.focusTimestamp,
+  // });
   const flameGraphData = genFlameGraphData(data);
+
+  console.log('flameGraphData', flameGraphData);
 
   React.useEffect(() => {
     setInput('');
