@@ -21,7 +21,8 @@
       "@/atoms/*": ["atoms/*"],
       "@/routes/*": ["routes/*"],
       "@/utils/*": ["utils/*"],
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@test-ui/*": ["../../../packages/ui/src/*"]
     }
   },
   "include": ["src"],

@@ -23,6 +23,7 @@
     "baseUrl": "./src",
     "paths": {
       // "@/*": ["*"]
+      "@test-ui/*": ["*"]
     },
     "sourceMap": true
   },
