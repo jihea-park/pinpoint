@@ -22,7 +22,7 @@
       "@/routes/*": ["routes/*"],
       "@/utils/*": ["utils/*"],
       "@/*": ["*"],
-      "@test-ui/*": ["../../../packages/ui/src/*"]
+      "@pinpoint-fe/ui/*": ["../../../packages/ui/src/*"]
     }
   },
   "include": ["src"],

@@ -23,7 +23,7 @@
     "baseUrl": "./src",
     "paths": {
       // "@/*": ["*"]
-      "@test-ui/*": ["*"]
+      "@pinpoint-fe/ui/*": ["*"]
     },
     "sourceMap": true
   },
