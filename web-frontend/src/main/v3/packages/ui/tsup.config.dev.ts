@@ -1,12 +1,12 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: {
-    'pinpoint-fe-common-ui': 'src/index.ts',
-  },
+  entry: [
+    'src/index.ts', // root entry
+  ],
   splitting: true,
   dts: true,
-  format: ['cjs', 'esm'],
+  format: ['esm'],
   external: [
     '@pinpoint-fe/atoms',
     '@pinpoint-fe/hooks',
@@ -20,15 +20,5 @@ export default defineConfig({
     'tailwindcss-animate',
     'tailwind-scrollbar-hide',
   ],
-  outExtension: ({ format }) => {
-    if (format === 'cjs') {
-      return {
-        js: `.umd.cjs`,
-      };
-    } else {
-      return {
-        js: `.es.js`,
-      };
-    }
-  },
+  outDir: 'dist',
 });

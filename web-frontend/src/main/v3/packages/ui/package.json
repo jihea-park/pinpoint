@@ -3,21 +3,17 @@
   "version": "0.0.0",
   "license": "Apache-2.0",
   "type": "module",
-  "main": "src/index.ts",
-  "author": {
-    "name": "NAVER Platform FE"
-  },
-  "files": [
-    "dist"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/pinpoint-fe-common-ui.es.js",
-      "require": "./dist/pinpoint-fe-common-ui.umd.cjs",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
-    "./tailwind.config.js": "./tailwind.config.js",
-    "./dist/pinpoint-fe-common-ui.css": "./dist/pinpoint-fe-common-ui.css"
+    "./**": "./dist/index.js",
+    "./dist/pinpoint-fe-common-ui.css": "./dist/index.css",
+    "./tailwind.config.js": "./tailwind.config.js"
   },
   "scripts": {
     "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\"",
