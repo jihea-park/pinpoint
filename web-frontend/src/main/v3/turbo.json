@@ -23,6 +23,7 @@
     "@pinpoint-fe/ui#build": {
       "dependsOn": [
         "@pinpoint-fe/atoms#build",
+        "@pinpoint-fe/utils#build",
         "@pinpoint-fe/scatter-chart#build",
         "@pinpoint-fe/datetime-picker#build",
         "@pinpoint-fe/server-map#build"
@@ -56,6 +57,7 @@
     "@pinpoint-fe/ui#devBuild": {
       "dependsOn": [
         "@pinpoint-fe/atoms#devBuild",
+        "@pinpoint-fe/utils#devBuild",
         "@pinpoint-fe/scatter-chart#devBuild",
         "@pinpoint-fe/datetime-picker#devBuild",
         "@pinpoint-fe/server-map#devBuild"
