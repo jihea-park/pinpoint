@@ -9,7 +9,6 @@ export default defineConfig({
   format: ['esm'],
   external: [
     '@pinpoint-fe/atoms',
-    '@pinpoint-fe/hooks',
     'react',
     'react-dom',
     'react-router-dom',
