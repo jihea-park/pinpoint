@@ -30,7 +30,6 @@
   },
   "peerDependencies": {
     "@pinpoint-fe/atoms": "*",
-    "@pinpoint-fe/hooks": "*",
     "i18next": "^23.2.11",
     "jotai": "^2.1.1",
     "react": "^18.2.0",
