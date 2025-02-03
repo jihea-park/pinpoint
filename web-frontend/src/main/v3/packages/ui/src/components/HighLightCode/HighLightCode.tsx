@@ -24,15 +24,22 @@ export const HighLightCode = ({
   code = '',
   className,
 }: HighLightCodeProps) => {
-  const [highLightedCode, setHighLightedCode] = React.useState(code);
+  const [highLightedCode, setHighLightedCode] = React.useState(code || '');
 
   React.useEffect(() => {
     try {
-      const value = hljs.highlight(code, { language }).value; // 수정
-      setHighLightedCode(value);
+      // 언어가 정상적으로 등록되었는지 확인
+      if (!hljs.getLanguage(language)) {
+        console.warn(`Highlight.js: '${language}' 언어가 등록되지 않았습니다.`);
+        setHighLightedCode(code || '');
+        return;
+      }
+
+      const result = hljs.highlight(code || '', { language, ignoreIllegals: true });
+      setHighLightedCode(result.value);
     } catch (error) {
       console.error(`Highlight.js 오류:`, error);
-      setHighLightedCode(code); // 에러 발생 시 원본 코드 그대로 출력
+      setHighLightedCode(code || ''); // 오류 발생 시 원본 코드 출력
     }
   }, [code, language]);
 
