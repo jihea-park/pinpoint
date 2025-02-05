@@ -17,18 +17,18 @@
     "dist/**"
   ],
   "scripts": {
+    "dev": "vite build --watch",
+    "devBuild": "vite build",
+    "test": "jest",
+    "build": "yarn lint && tsc --noEmit && vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "yarn format && eslint ./src/**/*.ts --config .eslintrc.cjs",
-    "test": "jest",
     "storybook": "start-storybook -p 6008",
     "build-storybook": "build-storybook",
-    "build": "tsup --config tsup.config.production.ts",
     "clean": "yarn clean:dist && yarn clean:node_modules && yarn clean:turbo",
     "clean:node_modules": "rm -rf node_modules",
     "clean:dist": "rm -rf dist",
-    "clean:turbo": "rm -rf .turbo",
-    "dev": "tsup --config tsup.config.dev.ts --watch",
-    "devBuild": "tsup --config tsup.config.dev.ts"
+    "clean:turbo": "rm -rf .turbo"
   },
   "dependencies": {
     "cytoscape": "^3.24.0",
@@ -66,7 +66,8 @@
     "jest-environment-jsdom": "^28.1.2",
     "prettier": "^3.3.3",
     "ts-jest": "^28.0.5",
-    "tsup": "^6.2.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "vite": "^6.1.0",
+    "vite-plugin-dts": "^4.5.0"
   }
 }

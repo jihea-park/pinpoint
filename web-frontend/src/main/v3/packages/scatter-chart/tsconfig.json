@@ -13,13 +13,10 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES6"
+    "target": "ES6",
+    "sourceMap": true,
   },
-  "include": [
-    ".",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["src"],
   "exclude": [
     "dist",
     "build",

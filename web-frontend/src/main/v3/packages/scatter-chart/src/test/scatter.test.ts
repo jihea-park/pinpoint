@@ -3,8 +3,8 @@ import { fireEvent, waitFor } from '@testing-library/dom';
 import data1 from './mock/data1.json';
 import data2 from './mock/data2.json';
 import { initOption, ScatterChartTestHelper, simulateDrag } from './helper';
-import { Legend } from '../src/ui/Legend';
-import { Viewport } from '../src/ui/Viewport';
+import { Legend } from '../../src/ui/Legend';
+import { Viewport } from '../../src/ui/Viewport';
 
 describe('Test for Scatter', () => {
   let SC: ScatterChartTestHelper;

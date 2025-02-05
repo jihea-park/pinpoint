@@ -1,5 +1,5 @@
-import { ScatterChart } from '../src';
-import { ScatterChartOption } from '../src/ui/ScatterChart';
+import { ScatterChart } from '../../src';
+import { ScatterChartOption } from '../../src/ui/ScatterChart';
 
 export class ScatterChartTestHelper extends ScatterChart {
   constructor(wrapper: HTMLElement, options: ScatterChartOption) {
