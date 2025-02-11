@@ -16,9 +16,7 @@
     "target": "ES6"
   },
   "include": [
-    ".",
-    "**/*.ts",
-    "**/*.tsx"
+    "src"
   ],
   "exclude": [
     "dist",
