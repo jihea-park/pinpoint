@@ -34,6 +34,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.join(__dirname, './src'),
+      '@pinpoint-fe/ui': path.resolve(__dirname, '../../packages/ui/src'),
       // '@pinpoint-fe/ui/dist': path.join(__dirname, '../../packages/ui2/dist'),
       // '@pinpoint-fe/ui': path.join(__dirname, '../../packages/ui2/src'),
     },

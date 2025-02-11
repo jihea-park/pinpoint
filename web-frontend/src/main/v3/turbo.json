@@ -39,18 +39,13 @@
       "outputs": ["dist/**"]
     },
     "dev": {
-      "cache": false,
-      "dependsOn": ["@pinpoint-fe/ui#devBuild"]
+      "cache": false
     },
-    "lint": {
-      "dependsOn": [
-        "@pinpoint-fe/datetime-picker#devBuild",
-        "@pinpoint-fe/scatter-chart#devBuild",
-        "@pinpoint-fe/server-map#devBuild",
-        "@pinpoint-fe/ui#devBuild"
-      ],
-      "outputs": []
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     },
+    "lint": {},
     "clean": {},
     "clean:dist": {},
     "test": {},

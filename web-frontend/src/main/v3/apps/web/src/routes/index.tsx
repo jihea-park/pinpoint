@@ -1,4 +1,3 @@
-import '@pinpoint-fe/ui/dist/pinpoint-fe-common-ui.css';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import ServerMap from '@/pages/ServerMap';
 import Realtime from '@/pages/ServerMap/Realtime';
