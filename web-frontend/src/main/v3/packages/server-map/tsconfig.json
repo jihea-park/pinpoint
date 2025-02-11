@@ -1,6 +1,6 @@
 {
-  "include": [".", "**/*.ts", "**/*.tsx"],
-  "exclude": ["build", "node_modules", "dist", "build", "node_modules", "**/*.stories.tsx"],
+  "include": ["src"],
+  "exclude": ["build", "node_modules", "dist", "node_modules", "**/*.stories.tsx"],
   "compilerOptions": {
     "composite": false,
     "declaration": true,

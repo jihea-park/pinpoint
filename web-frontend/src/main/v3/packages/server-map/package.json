@@ -6,29 +6,27 @@
   "author": "NAVER",
   "license": "Apache-2.0",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
-  "types": "./dist/index.d.ts",
   "files": [
     "dist/**"
   ],
   "scripts": {
+    "build": "vite build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "yarn format && eslint ./src/**/*.ts --config .eslintrc.cjs",
     "test": "jest",
     "storybook": "start-storybook -p 6008",
     "build-storybook": "build-storybook",
-    "build": "tsup --config tsup.config.production.ts",
     "clean": "yarn clean:dist && yarn clean:node_modules && yarn clean:turbo",
     "clean:node_modules": "rm -rf node_modules",
     "clean:dist": "rm -rf dist",
-    "clean:turbo": "rm -rf .turbo",
-    "dev": "tsup --config tsup.config.dev.ts --watch",
-    "devBuild": "tsup --config tsup.config.dev.ts"
+    "clean:turbo": "rm -rf .turbo"
   },
   "dependencies": {
     "cytoscape": "^3.24.0",
@@ -57,6 +55,7 @@
     "@types/react": "^18.0.14",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react-swc": "^3.3.2",
     "babel-loader": "^8.2.5",
     "chromatic": "^6.5.4",
     "eslint": "^8.15.0",
@@ -66,7 +65,8 @@
     "jest-environment-jsdom": "^28.1.2",
     "prettier": "^3.3.3",
     "ts-jest": "^28.0.5",
-    "tsup": "^6.2.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.5.3"
   }
 }

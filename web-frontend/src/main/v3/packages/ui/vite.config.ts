@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       '@pinpoint-fe/ui': path.resolve(__dirname, 'src'),
       '@pinpoint-fe/scatter-chart': path.resolve(__dirname, '../scatter-chart/src'),
+      '@pinpoint-fe/server-map': path.resolve(__dirname, '../server-map/src'),
     },
   },
   build: {
