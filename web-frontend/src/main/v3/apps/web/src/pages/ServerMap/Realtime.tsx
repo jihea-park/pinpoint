@@ -13,7 +13,7 @@ import {
   Realtime,
   withInitialFetch,
 } from '@pinpoint-fe/ui';
-import { getLayoutWithSideNavigation } from '@/components/Layout/LayoutWithSideNavigation';
+import { getLayoutWithSideNavigation } from '@pinpoint-fe/web/components/Layout/LayoutWithSideNavigation';
 import { PiTreeStructureDuotone } from 'react-icons/pi';
 
 export interface RealtimePageProps {}

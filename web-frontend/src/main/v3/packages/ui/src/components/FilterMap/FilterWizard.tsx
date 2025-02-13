@@ -26,7 +26,7 @@ import { GoDot } from 'react-icons/go';
 import { FilterStatus } from './FilterStatus';
 import { FilteredMapType as FilteredMap } from '@pinpoint-fe/ui/constants';
 import { addCommas, getApplicationTypeAndName } from '@pinpoint-fe/ui/utils';
-import { Edge, Node } from '@pinpoint-fe/server-map';
+import { Edge, Node } from '@pinpoint-fe/ui/utils/helper/serverMap';
 
 export interface FilterWizardProps {
   className?: string;

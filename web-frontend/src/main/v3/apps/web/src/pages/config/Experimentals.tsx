@@ -1,6 +1,9 @@
 import { useAtomValue } from 'jotai';
 import { ExperimentalPage as Experimental, withInitialFetch } from '@pinpoint-fe/ui';
-import { getLayoutWithConfiguration, getLayoutWithSideNavigation } from '@/components/Layout';
+import {
+  getLayoutWithConfiguration,
+  getLayoutWithSideNavigation,
+} from '@pinpoint-fe/web/components/Layout';
 import { configurationAtom } from '@pinpoint-fe/ui/atoms';
 
 export interface ExperimentalPageProps {}

@@ -3,18 +3,7 @@
   "version": "0.0.0",
   "license": "Apache-2.0",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./**": "./dist/index.js",
-    "./dist/pinpoint-fe-common-ui.css": "./dist/style.css",
-    "./tailwind.config.js": "./tailwind.config.js"
-  },
+  "main": "./src/index.ts",
   "scripts": {
     "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\"",
     "dev": "vite build --watch",

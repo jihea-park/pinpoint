@@ -15,7 +15,7 @@ import {
 } from '@pinpoint-fe/ui/utils';
 import { useServerMapSearchParameters } from '@pinpoint-fe/ui/hooks';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
-import { ServerList } from '@/components/ServerList/ServerList';
+import { ServerList } from '@pinpoint-fe/web/components/ServerList/ServerList';
 import { RxChevronRight } from 'react-icons/rx';
 import {
   serverMapDataAtom,
@@ -52,7 +52,7 @@ import {
   ServerChartsBoard,
   HelpPopover,
 } from '@pinpoint-fe/ui';
-import { getLayoutWithSideNavigation } from '@/components/Layout/LayoutWithSideNavigation';
+import { getLayoutWithSideNavigation } from '@pinpoint-fe/web/components/Layout/LayoutWithSideNavigation';
 import { Edge, Node } from '@pinpoint-fe/server-map';
 import { PiTreeStructureDuotone } from 'react-icons/pi';
 

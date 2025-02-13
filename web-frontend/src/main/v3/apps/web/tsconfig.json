@@ -17,12 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/atoms/*": ["atoms/*"],
-      "@/routes/*": ["routes/*"],
-      "@/utils/*": ["utils/*"],
-      "@/*": ["*"],
-      "@pinpoint-fe/ui": ["../../../packages/ui/src"],
+      "@pinpoint-fe/web/*": ["*"],
       "@pinpoint-fe/ui/*": ["../../../packages/ui/src/*"]
     }
   },

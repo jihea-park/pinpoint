@@ -1,4 +1,7 @@
-import { getLayoutWithConfiguration, getLayoutWithSideNavigation } from '@/components/Layout';
+import {
+  getLayoutWithConfiguration,
+  getLayoutWithSideNavigation,
+} from '@pinpoint-fe/web/components/Layout';
 import {
   AgentDuplicationCheck,
   ApplicationDuplicationCheck,

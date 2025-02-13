@@ -4,6 +4,11 @@ import {
   GetServerMap,
 } from '@pinpoint-fe/ui/constants';
 
+import { Edge, Node } from '@pinpoint-fe/server-map';
+
+export type Edge = Edge;
+export type Node = Node;
+
 export const getBaseNodeId = ({
   application,
   applicationMapData,

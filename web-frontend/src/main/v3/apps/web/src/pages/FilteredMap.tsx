@@ -13,7 +13,7 @@ import {
 } from '@pinpoint-fe/ui/utils';
 import { useFilteredMapParameters } from '@pinpoint-fe/ui/hooks';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
-import { ServerList } from '@/components/ServerList/ServerList';
+import { ServerList } from '@pinpoint-fe/web/components/ServerList/ServerList';
 import {
   serverMapDataAtom,
   serverMapCurrentTargetAtom,
@@ -57,8 +57,8 @@ import {
   SERVERMAP_MENU_FUNCTION_TYPE,
   ScatterChartStatic,
 } from '@pinpoint-fe/ui';
-import { getLayoutWithSideNavigation } from '@/components/Layout/LayoutWithSideNavigation';
-import { Node, Edge } from '@pinpoint-fe/server-map';
+import { getLayoutWithSideNavigation } from '@pinpoint-fe/web/components/Layout/LayoutWithSideNavigation';
+import { Node, Edge } from '@pinpoint-fe/ui/utils/helper/serverMap';
 import { PiTreeStructureDuotone } from 'react-icons/pi';
 
 export interface FilteredMapPageProps {}
