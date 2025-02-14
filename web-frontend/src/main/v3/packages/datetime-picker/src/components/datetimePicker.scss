@@ -255,7 +255,7 @@
   .rich-datetime-picker__trigger {
     @apply rdp-relative rdp-flex rdp-h-8 rdp-rounded rdp-border;
   }
-  .rich-datetime-picker__trigger.disable {
+  .rich-datetime-picker__trigger.div-disable {
     @apply rdp-pointer-events-none rdp-opacity-50;
   }
   .rich-datetime-picker__input {

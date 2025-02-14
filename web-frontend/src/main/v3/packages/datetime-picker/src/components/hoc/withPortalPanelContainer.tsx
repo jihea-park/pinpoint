@@ -2,7 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { DatePanelProps } from '../DatePanel';
 import { useOnClickOutside } from 'usehooks-ts';
-import { throttle } from '@/utils/functions';
+import { throttle } from '../../utils/functions';
 
 interface WithPortalPanelContainerProps extends DatePanelProps {
   triggerRef: React.RefObject<HTMLDivElement>;

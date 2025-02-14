@@ -3,16 +3,16 @@ import './datepicker.scss';
 
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { ReactComponent as ArrowLeft } from '@/assets/arrow-left.svg';
-import { ReactComponent as ArrowRight } from '@/assets/arrow-right.svg';
-import { ReactComponent as ArrowDoubleLeft } from '@/assets/arrow-double-left.svg';
-import { ReactComponent as ArrowDoubleRight } from '@/assets/arrow-double-right.svg';
+import { ReactComponent as ArrowLeft } from '../assets/arrow-left.svg';
+import { ReactComponent as ArrowRight } from '../assets/arrow-right.svg';
+import { ReactComponent as ArrowDoubleLeft } from '../assets/arrow-double-left.svg';
+import { ReactComponent as ArrowDoubleRight } from '../assets/arrow-double-right.svg';
 import { RichDatetimePickerProps } from './RichDatetimePicker';
 import { Locale, addDays, format, isWithinInterval, subMonths } from 'date-fns';
 import { DateRange } from '../types';
 import classNames from 'classnames';
 import AppContext from './context/appContext';
-import { getZonedEndOfDay, getZonedStartOfDay } from '@/utils/date';
+import { getZonedEndOfDay, getZonedStartOfDay } from '../utils/date';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 export interface DatePickerProps

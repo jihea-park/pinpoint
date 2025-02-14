@@ -8,7 +8,7 @@ import {
   getZonedStartOfDay,
   getZonedStartOfMonth,
   parseTimeString,
-} from '@/utils/date';
+} from '../utils/date';
 import { Transition } from '@headlessui/react';
 import AppContext from './context/appContext';
 import { formatInTimeZone, utcToZonedTime } from 'date-fns-tz';

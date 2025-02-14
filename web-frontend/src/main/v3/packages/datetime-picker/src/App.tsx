@@ -1,5 +1,5 @@
 import React from 'react';
-import { RichDatetimePicker } from '@/components/RichDatetimePicker';
+import { RichDatetimePicker } from './components/RichDatetimePicker';
 import { subMinutes } from 'date-fns';
 import { convertToTimeUnit } from './utils/date';
 import { DateRange } from './types';

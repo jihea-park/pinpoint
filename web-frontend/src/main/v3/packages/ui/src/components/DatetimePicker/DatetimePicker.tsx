@@ -1,5 +1,5 @@
 import './datetime-picker.css';
-import '@pinpoint-fe/datetime-picker/dist/rich-datetime-picker.css';
+// import '@pinpoint-fe/datetime-picker/dist/rich-datetime-picker.css';
 import React from 'react';
 import { subDays, format, subYears } from 'date-fns';
 import { RxChevronLeft, RxChevronRight, RxPlay, RxTrackNext, RxStop } from 'react-icons/rx';

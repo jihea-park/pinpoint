@@ -3,11 +3,11 @@ import React from 'react';
 import classNames from 'classnames';
 import { isValid } from 'date-fns';
 import { useOnClickOutside, useUpdateEffect } from 'usehooks-ts';
-import { getLocale } from '@/utils/locale';
-import { DateRange, LocaleKey } from '@/types';
-import { SEAM_TOKEN } from '@/constants/patterns';
-import { useCaptureKeydown } from '@/utils/useCaptureKeydown';
-import { getFormattedTimeUnit, getZonedEndOfDay, parseTimeString } from '@/utils/date';
+import { getLocale } from '../utils/locale';
+import { DateRange, LocaleKey } from '../types';
+import { SEAM_TOKEN } from '../constants/patterns';
+import { useCaptureKeydown } from '../utils/useCaptureKeydown';
+import { getFormattedTimeUnit, getZonedEndOfDay, parseTimeString } from '../utils/date';
 import { DatePanel, DatePanelProps } from './DatePanel';
 import { withPortalPanelContainer } from './hoc/withPortalPanelContainer';
 import AppContext from './context/appContext';
@@ -176,7 +176,7 @@ export const RichDatetimePicker = ({
               'rdp-border-stateRed': !isValidInput,
             },
             {
-              disable: disable,
+              'div-disable': disable,
             },
             triggerClassName,
           )}
