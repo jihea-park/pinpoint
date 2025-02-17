@@ -163,17 +163,14 @@ export const RichDatetimePicker = ({
 
   return (
     <AppContext.Provider value={{ appContext, setAppContext }}>
-      <div
-        className={classNames('rich-datetime-picker rdp-relative', className)}
-        ref={containerRef}
-      >
+      <div className={classNames('rich-datetime-picker relative', className)} ref={containerRef}>
         <div
           ref={triggerRef}
           className={classNames(
             'rich-datetime-picker__trigger',
             {
-              'rdp-border-primary': open,
-              'rdp-border-stateRed': !isValidInput,
+              'border-primary': open,
+              'border-stateRed': !isValidInput,
             },
             {
               'div-disable': disable,
@@ -182,7 +179,7 @@ export const RichDatetimePicker = ({
           )}
           onClick={() => setOpen(true)}
         >
-          <div className="rich-datetime-picker__tag rdp-absolute rdp-left-1.5 rdp-top-1.5">
+          <div className="rich-datetime-picker__tag absolute left-1.5 top-1.5">
             {from && to ? getFormattedTimeUnit(to?.getTime() - from?.getTime(), formatTag) : '-'}
           </div>
           {open ? (
