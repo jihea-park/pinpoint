@@ -2,12 +2,12 @@ import { useAtomValue } from 'jotai';
 import {
   getLayoutWithConfiguration,
   getLayoutWithSideNavigation,
-} from '@pinpoint-fe/web/components/Layout';
+} from '@pinpoint-fe/web/src/components/Layout';
 import {
   AgentManagementPage as CommonAgentManagementPage,
   withInitialFetch,
 } from '@pinpoint-fe/ui';
-import { configurationAtom } from '@pinpoint-fe/ui/atoms';
+import { configurationAtom } from '@pinpoint-fe/ui/src/atoms';
 
 export interface AgentManagementPageProps {}
 const AgentManagementPage = () => {

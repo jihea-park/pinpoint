@@ -2,9 +2,9 @@ import { useAtomValue } from 'jotai';
 import {
   getLayoutWithConfiguration,
   getLayoutWithSideNavigation,
-} from '@pinpoint-fe/web/components/Layout';
+} from '@pinpoint-fe/web/src/components/Layout';
 import { AgentStatisticPage as CommonAgentStatisticPage, withInitialFetch } from '@pinpoint-fe/ui';
-import { configurationAtom } from '@pinpoint-fe/ui/atoms';
+import { configurationAtom } from '@pinpoint-fe/ui/src/atoms';
 
 export interface AgentStatisticPageProps {}
 const AgentStatisticPage = () => {

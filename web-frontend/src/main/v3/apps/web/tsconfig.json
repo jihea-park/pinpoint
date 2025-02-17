@@ -15,11 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "paths": {
-      "@pinpoint-fe/web/*": ["*"],
-      "@pinpoint-fe/ui/*": ["../../../packages/ui/src/*"]
-    }
+    "baseUrl": "./src"
   },
   "include": ["src"],
   "exclude": ["dist", "build", "node_modules", "**/*.stories.tsx"],

@@ -3,8 +3,8 @@ import { ExperimentalPage as Experimental, withInitialFetch } from '@pinpoint-fe
 import {
   getLayoutWithConfiguration,
   getLayoutWithSideNavigation,
-} from '@pinpoint-fe/web/components/Layout';
-import { configurationAtom } from '@pinpoint-fe/ui/atoms';
+} from '@pinpoint-fe/web/src/components/Layout';
+import { configurationAtom } from '@pinpoint-fe/ui/src/atoms';
 
 export interface ExperimentalPageProps {}
 const ExperimentalPage = () => {
