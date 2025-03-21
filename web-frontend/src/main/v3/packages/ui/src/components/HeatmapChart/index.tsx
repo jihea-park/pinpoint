@@ -122,6 +122,7 @@ const DEFAULT = 450;
 const HeatmapChart = ({ data: _data }: { data?: any }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const tooltipRef = React.useRef<HTMLDivElement>(null);
   const [cells, setCells] = React.useState<Cell[]>([]);
   const [selectedCells, setSelectedCells] = React.useState(new Set());
 
@@ -156,7 +157,7 @@ const HeatmapChart = ({ data: _data }: { data?: any }) => {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     // 여백 및 차원 설정
-    const margin = { top: 30, right: 30, bottom: 30, left: 30 };
+    const margin = { top: 30, right: 30, bottom: 30, left: 50 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -180,13 +181,45 @@ const HeatmapChart = ({ data: _data }: { data?: any }) => {
       newCells.push({ x, y, width: cellWidth, height: cellHeight, value: d.value });
     });
 
+    drawAxisLabels(ctx, width, height, margin, cellWidth, cellHeight);
     setCells(newCells);
+  }
+
+  function filterSelectFiveElements(_, index, arr) {
+    const n = arr.length;
+    if (n <= 5) return true; // 요소가 5개 이하라면 모두 유지
+
+    const step = (n - 1) / 4; // 간격 계산
+    const positions = [0, ...Array.from({ length: 3 }, (_, i) => Math.round((i + 1) * step)), n - 1];
+
+    return positions.includes(index);
+}
+
+  function drawAxisLabels(ctx: CanvasRenderingContext2D, width: number, height: number, margin: any, cellWidth: number, cellHeight: number) {
+    // X축 레이블
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    myGroups.forEach((group, i) => {
+      if (!filterSelectFiveElements(group, i, myGroups)) return;
+      const x = margin.left + i * cellWidth + cellWidth / 2;
+      ctx.fillText(group, x, height +  margin.top + 20);
+    });
+
+    // Y축 레이블
+    ctx.textAlign = "right";
+    myVars.forEach((variable, i) => {
+      if (!filterSelectFiveElements(variable, i, myVars)) return;
+      const y = margin.top + i * cellHeight + cellHeight / 2;
+      ctx.fillText(variable, margin.left - 10, y);
+    });
   }
 
   function handleMouseMove(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const rect = canvasRef?.current?.getBoundingClientRect();
+    const tooltip = tooltipRef?.current;
 
-    if (!rect) {
+    if (!rect || !tooltip) {
       return;
     }
 
@@ -198,15 +231,13 @@ const HeatmapChart = ({ data: _data }: { data?: any }) => {
       (c) => mouseX >= c.x && mouseX <= c.x + c.width && mouseY >= c.y && mouseY <= c.y + c.height,
     );
 
-    console.log('cell', cell);
-
     if (cell) {
-      // tooltip.style.opacity = 1;
-      // tooltip.style.left = `${event.pageX + 10}px`;
-      // tooltip.style.top = `${event.pageY + 10}px`;
-      // tooltip.innerHTML = `Value: ${cell.value}`;
+      tooltip.style.opacity = '1';
+      tooltip.style.left = `${mouseX + 10}px`;
+      tooltip.style.top = `${mouseY + 10}px`;
+      tooltip.innerHTML = `Value: ${cell.value}`;
     } else {
-      // tooltip.style.opacity = 0;
+      tooltip.style.opacity = '0';
     }
   }
 
@@ -224,6 +255,7 @@ const HeatmapChart = ({ data: _data }: { data?: any }) => {
       ></canvas>
       <div
         id="tooltip"
+        ref={tooltipRef}
         style={{
           position: 'absolute',
           opacity: 0,
