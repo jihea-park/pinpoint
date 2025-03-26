@@ -1,3 +1,4 @@
+import { HeatmapFetcher } from '@pinpoint-fe/ui/src/components/Heatmap';
 import { HelpCommunity, HelpDocument } from '../../components';
 
 export interface HelpPageProps {}
@@ -24,6 +25,7 @@ export const HelpPage = () => {
         </h4>
         <HelpCommunity />
       </div>
+      <HeatmapFetcher/>
     </div>
   );
 };
