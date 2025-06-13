@@ -63,6 +63,7 @@ import {
 import { Edge, Node } from '@pinpoint-fe/server-map';
 import { PiTreeStructureDuotone, PiArrowSquareOut } from 'react-icons/pi';
 import { Heatmap } from '@pinpoint-fe/ui/src/components/Heatmap';
+import { ServerMapChartsBoard } from '@pinpoint-fe/ui/src/components/ServerMap/ServerMapChartBoard';
 
 export interface ServermapPageProps {
   authorizationGuideUrl?: string;
@@ -94,6 +95,8 @@ export const ServerMapPage = ({
   const [isScatterDataOutdated, setIsScatterDataOutdated] = React.useState(chartType !== 'scatter');
   const scatterData = useAtomValue(scatterDataAtom);
   const { t } = useTranslation();
+
+  console.log('currentTargetData', currentTargetData);
 
   React.useEffect(() => {
     if (
@@ -384,13 +387,7 @@ export const ServerMapPage = ({
             </div>
             {({ currentPanelWidth, SERVER_LIST_WIDTH, resizeHandleWidth }) => (
               <>
-                <ChartsBoard
-                  timestamp={serverMapData?.applicationMapData?.timestamp}
-                  nodeData={
-                    (currentTargetData as GetServerMap.NodeData)?.isAuthorized === false
-                      ? undefined
-                      : (currentTargetData as GetServerMap.NodeData)
-                  }
+                <ServerMapChartsBoard
                   header={
                     <ChartsBoardHeader
                       currentTarget={
@@ -478,7 +475,7 @@ export const ServerMapPage = ({
                       </a>
                     </div>
                   )}
-                </ChartsBoard>
+                </ServerMapChartsBoard>
                 <Drawer
                   open={openServerView}
                   getContainer={`#${SERVERMAP_CONTAINER_ID}`}
