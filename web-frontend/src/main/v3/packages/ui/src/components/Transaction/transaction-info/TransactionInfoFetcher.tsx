@@ -79,7 +79,8 @@ export const TransactionInfoFetcher = ({ disableHeader }: TransactionInfoFetcher
 
   return (
     <Tabs
-      value={currentTab || tabList[0].id}
+      value="flameGraph"
+      // value={currentTab || tabList[0].id}
       className="h-full"
       onValueChange={(id) => setCurrentTab(id)}
     >
