@@ -1,5 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-export namespace GetServerMapOnlyResponseTimeHistogram {
+export namespace GetHistogramStatistics {
   export interface Parameters {
     applicationName: string;
     serviceTypeName: string;
@@ -10,6 +10,7 @@ export namespace GetServerMapOnlyResponseTimeHistogram {
     wasOnly: boolean;
     bidirectional: boolean;
     useStatisticsAgentState: boolean;
+    nodeName: string;
   }
 
   export interface Response {

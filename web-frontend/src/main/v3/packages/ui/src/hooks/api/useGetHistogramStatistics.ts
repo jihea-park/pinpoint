@@ -1,11 +1,11 @@
 import React from 'react';
-import { END_POINTS, GetServerMapOnlyResponseTimeHistogram } from '@pinpoint-fe/ui/src/constants';
+import { END_POINTS, GetHistogramStatistics } from '@pinpoint-fe/ui/src/constants';
 import { convertParamsToQueryString } from '@pinpoint-fe/ui/src/utils';
 import { useServerMapSearchParameters } from '../searchParameters';
 import { useQuery } from '@tanstack/react-query';
 import { queryFn } from './reactQueryHelper';
 
-const getQueryString = (queryParams: Partial<GetServerMapOnlyResponseTimeHistogram.Parameters>) => {
+const getQueryString = (queryParams: Partial<GetHistogramStatistics.Parameters>) => {
   if (
     queryParams.useStatisticsAgentState !== null &&
     queryParams.useStatisticsAgentState !== undefined &&
@@ -21,25 +21,26 @@ const getQueryString = (queryParams: Partial<GetServerMapOnlyResponseTimeHistogr
 
 export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
   useStatisticsAgentState,
+  nodeName,
 }: {
   useStatisticsAgentState?: boolean;
+  nodeName: string;
 }) => {
   const { dateRange, search, application, queryOption } = useServerMapSearchParameters();
   const from = dateRange.from.getTime();
   const to = dateRange.to.getTime();
 
-  const [queryParams, setQueryParams] = React.useState<
-    Partial<GetServerMapOnlyResponseTimeHistogram.Parameters>
-  >({
+  const [queryParams, setQueryParams] = React.useState<Partial<GetHistogramStatistics.Parameters>>({
     from,
     to,
     calleeRange: queryOption.inbound,
     callerRange: queryOption.outbound,
     wasOnly: !!queryOption.wasOnly,
     bidirectional: !!queryOption.bidirectional,
-    useStatisticsAgentState,
     serviceTypeName: application?.serviceType,
     applicationName: application?.applicationName,
+    useStatisticsAgentState,
+    nodeName,
   });
   const queryString = getQueryString(queryParams);
 
@@ -53,6 +54,7 @@ export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
       wasOnly: !!queryOption.wasOnly,
       bidirectional: !!queryOption.bidirectional,
       useStatisticsAgentState,
+      nodeName,
       from,
       to,
     }));
@@ -63,11 +65,12 @@ export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
     to,
     search,
     useStatisticsAgentState,
+    nodeName,
   ]);
 
-  const { data, isLoading } = useQuery<GetServerMapOnlyResponseTimeHistogram.Response>({
-    queryKey: [END_POINTS.SERVER_MAP_GET_RESPONSE_TIME_HISTOGRAM_DATA_V2, queryString],
-    queryFn: queryFn(`${END_POINTS.SERVER_MAP_GET_RESPONSE_TIME_HISTOGRAM_DATA_V2}${queryString}`),
+  const { data, isLoading } = useQuery<GetHistogramStatistics.Response>({
+    queryKey: [END_POINTS.HISTOGRAM_STATISTICS, queryString],
+    queryFn: queryFn(`${END_POINTS.HISTOGRAM_STATISTICS}${queryString}`),
     enabled: !!queryString,
   });
 

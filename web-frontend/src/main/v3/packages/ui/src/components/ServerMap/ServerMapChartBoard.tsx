@@ -25,16 +25,22 @@ export const ServerMapChartsBoard = ({ ...props }: ServerMapChartsBoardProps) =>
 };
 
 export interface ServerMapChartsBoardFetcherProps
-  extends Omit<ChartsBoardProps, 'timestamp' | 'nodeData'> {}
+  extends Omit<ChartsBoardProps, 'timestamp' | 'nodeData'> {
+  nodeName: string;
+}
 
 export const ServerMapChartsBoardFetcher = ({
+  nodeName,
   children,
   ...props
 }: ServerMapChartsBoardFetcherProps) => {
   const { t } = useTranslation();
   const experimentalOption = useExperimentals();
   const useStatisticsAgentState = experimentalOption.statisticsAgentState.value || true;
-  const { data } = useGetServerMapGetResponseTimeHistogramDataV2({ useStatisticsAgentState });
+  const { data } = useGetServerMapGetResponseTimeHistogramDataV2({
+    useStatisticsAgentState,
+    nodeName,
+  });
 
   const getServerData = React.useCallback(() => {
     return {

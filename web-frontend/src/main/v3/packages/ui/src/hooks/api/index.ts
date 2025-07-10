@@ -41,7 +41,7 @@ export * from './useGetOtlpMetricDefUserDefined';
 export * from './useGetScatterData';
 export * from './useGetScatterRealtimeData';
 export * from './useGetServerMapDataV2';
-export * from './useGetServerMapGetResponseTimeHistogramDataV2';
+export * from './useGetHistogramStatistics';
 export * from './useGetSeverTime';
 export * from './useGetSystemMetricChartData';
 export * from './useGetSystemMetricHostData';
