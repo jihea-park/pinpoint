@@ -20,6 +20,8 @@ import { convertParamsToQueryString, getInspectorPath } from '@pinpoint-fe/ui/sr
 import { PiChartLineDuotone } from 'react-icons/pi';
 import { TimeUnitFormat } from '@pinpoint-fe/datetime-picker';
 import { APP_SETTING_KEYS, Configuration } from '@pinpoint-fe/ui/src/constants';
+import { serverMapCurrentTargetAtom, serverMapDataAtom } from '@pinpoint-fe/ui/src/atoms';
+import { useAtomValue } from 'jotai';
 
 export interface InspectorPageProps {
   configuration?: Configuration;
@@ -35,6 +37,11 @@ export const InspectorPage = ({
   const navigate = useNavigate();
   const { searchParameters, application, agentId, version } = useInspectorSearchParameters();
   const { t } = useTranslation();
+
+  const serverMapCurrentTarget = useAtomValue(serverMapCurrentTargetAtom);
+  const serverMapData = useAtomValue(serverMapDataAtom);
+  console.log('serverMapData', serverMapData);
+  console.log('serverMapCurrentTarget', serverMapCurrentTarget);
 
   const handleChangeDateRagePicker = React.useCallback(
     (({ formattedDates: formattedDate }) => {
