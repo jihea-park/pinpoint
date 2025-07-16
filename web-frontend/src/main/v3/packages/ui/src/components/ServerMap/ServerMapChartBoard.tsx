@@ -31,11 +31,10 @@ import { PiArrowSquareOut } from 'react-icons/pi';
 import {
   currentServerAtom,
   CurrentTarget,
+  NewServerMapCurrentTarget,
   scatterDataAtom,
   serverMapChartTypeAtom,
   serverMapCurrentTargetAtom,
-  serverMapCurrentTargetDataAtom,
-  serverMapDataAtom,
 } from '@pinpoint-fe/ui/src/atoms';
 import { useAtom, useAtomValue } from 'jotai';
 import { getServerImagePath } from '@pinpoint-fe/ui/src/utils';
@@ -64,6 +63,8 @@ export interface ServerMapChartsBoardFetcherProps
   SERVER_LIST_WIDTH: number;
   resizeHandleWidth: number;
   SERVERMAP_CONTAINER_ID: string;
+  serverMapCurrentTarget?: NewServerMapCurrentTarget;
+  setServerMapCurrentTarget?: (target: NewServerMapCurrentTarget) => void;
 }
 
 export const ServerMapChartsBoardFetcher = ({
@@ -73,6 +74,8 @@ export const ServerMapChartsBoardFetcher = ({
   SERVER_LIST_WIDTH,
   resizeHandleWidth,
   SERVERMAP_CONTAINER_ID,
+  serverMapCurrentTarget,
+  setServerMapCurrentTarget,
   children,
   ...props
 }: ServerMapChartsBoardFetcherProps) => {
@@ -81,14 +84,13 @@ export const ServerMapChartsBoardFetcher = ({
   const { application, dateRange } = useServerMapSearchParameters();
 
   const chartType = useAtomValue(serverMapChartTypeAtom);
-  const serverMapData = useAtomValue(serverMapDataAtom);
-  const currentTargetData = useAtomValue(serverMapCurrentTargetDataAtom);
+
   const currentServer = useAtomValue(currentServerAtom);
   const scatterData = useAtomValue(scatterDataAtom);
-  const [serverMapCurrentTarget, setServerMapCurrentTarget] = useAtom(serverMapCurrentTargetAtom);
 
+  // console.log('currentServer', currentServer);
   // console.log('application', application);
-  // console.log('serverMapCurrentTarget', serverMapCurrentTarget);
+  console.log('serverMapCurrentTarget', serverMapCurrentTarget);
   // console.log('currentTargetData', currentTargetData);
 
   const [openServerView, setOpenServerView] = React.useState(false);
@@ -100,7 +102,7 @@ export const ServerMapChartsBoardFetcher = ({
   const { data, isLoading } = useGetServerMapGetResponseTimeHistogramDataV2({
     useStatisticsAgentState,
     nodeName:
-      serverMapCurrentTarget?.edges || serverMapCurrentTarget?.nodes
+      serverMapCurrentTarget?.hasOwnProperty('data') && !serverMapCurrentTarget?.data
         ? ''
         : serverMapCurrentTarget?.applicationName || application?.applicationName || '',
   });
@@ -118,21 +120,19 @@ export const ServerMapChartsBoardFetcher = ({
     setIsScatterDataOutdated(true);
   }, [dateRange, scatterData]);
 
-  const getClickedMergedNodeList = ({ nodes, edges }: CurrentTarget) => {
-    const nodeIds = nodes
-      ? nodes.map((node) => node.id)
-      : edges
-        ? edges.map((edge) => edge.target)
-        : [];
-
-    return (serverMapData?.applicationMapData.nodeDataArray as GetServerMap.NodeData[])
-      .filter(({ key }: GetServerMap.NodeData) => nodeIds.includes(key))
-      .sort((node1, node2) => node2.totalCount - node1.totalCount);
+  const getClickedMergedNodeList = ({ nodes, edges }: NewServerMapCurrentTarget) => {
+    if (nodes?.length) {
+      return nodes?.sort((node1, node2) => node2?.totalCount - node1?.totalCount);
+    }
+    if (edges?.length) {
+      return edges?.sort((edge1, edge2) => edge2?.totalCount - edge1?.totalCount);
+    }
+    return [];
   };
 
   const handleClickMergedItem: MergedServerSearchListProps['onClickItem'] = (nodeData) => {
     const { key, applicationName, serviceType } = nodeData;
-    setServerMapCurrentTarget({
+    setServerMapCurrentTarget?.({
       id: key,
       applicationName,
       serviceType,
@@ -144,8 +144,12 @@ export const ServerMapChartsBoardFetcher = ({
   };
 
   const shouldHideScatter = React.useCallback(() => {
-    return currentTargetData && !(currentTargetData as GetServerMap.NodeData)?.isWas;
-  }, [currentTargetData]);
+    return (
+      serverMapCurrentTarget &&
+      serverMapCurrentTarget?.data &&
+      !(serverMapCurrentTarget?.data as GetServerMap.NodeData)?.isWas
+    );
+  }, [serverMapCurrentTarget]);
 
   const getServerData = React.useCallback(() => {
     if (!isLoading && data) {
@@ -164,12 +168,17 @@ export const ServerMapChartsBoardFetcher = ({
     return;
   }, [isLoading, data]);
   const serverData = getServerData();
+
   const timestamp = React.useMemo(() => {
     return data?.timeSeriesHistogram?.[0]?.values?.map((v) => v?.[0]);
   }, [data]);
 
   const renderChildren = () => {
-    if (currentTargetData && !(currentTargetData as GetServerMap.NodeData)?.isAuthorized) {
+    if (
+      serverMapCurrentTarget?.type === 'node' &&
+      serverMapCurrentTarget?.data &&
+      !(serverMapCurrentTarget?.data as GetServerMap.NodeData)?.isAuthorized
+    ) {
       return (
         <div className="flex justify-center pt-24 font-semibold text-status-fail">
           <a href={authorizationGuideUrl} target="_blank">
@@ -189,7 +198,7 @@ export const ServerMapChartsBoardFetcher = ({
     if (hasNodesOrEdges) {
       return (
         <MergedServerSearchList
-          list={getClickedMergedNodeList(serverMapCurrentTarget)}
+          list={getClickedMergedNodeList(serverMapCurrentTarget) as GetServerMap.NodeData[]}
           onClickItem={handleClickMergedItem}
         />
       );
@@ -197,7 +206,7 @@ export const ServerMapChartsBoardFetcher = ({
 
     return (
       <>
-        {hasServerList && isNode ? (
+        {hasServerList ? (
           <div className="flex items-center h-12 py-2.5 px-4 gap-2">
             <Button
               className="px-2 py-1 text-xs"
@@ -208,7 +217,7 @@ export const ServerMapChartsBoardFetcher = ({
               <span className="ml-2">VIEW SERVERS</span>
             </Button>
             <ChartTypeButtons />
-            <InstanceCount nodeData={currentTargetData as GetServerMap.NodeData} />
+            <InstanceCount nodeData={serverMapCurrentTarget as GetServerMap.NodeData} />
           </div>
         ) : !shouldHideScatter() ? (
           <div className="flex items-center h-12 py-2.5 px-4 gap-2">
@@ -262,7 +271,11 @@ export const ServerMapChartsBoardFetcher = ({
           />
         }
         timestamp={timestamp}
-        nodeData={serverData as unknown as GetServerMap.NodeData}
+        nodeData={
+          (serverMapCurrentTarget?.data as GetServerMap.NodeData)?.isAuthorized === false
+            ? undefined
+            : (serverData as unknown as GetServerMap.NodeData)
+        }
         emptyMessage={t('COMMON.NO_DATA')}
       >
         {renderChildren()}
@@ -302,7 +315,7 @@ export const ServerMapChartsBoardFetcher = ({
               </div>
             }
             disableFetch={!openServerView && !openServerViewTransitionEnd}
-            nodeData={currentTargetData as GetServerMap.NodeData}
+            nodeData={serverMapCurrentTarget as GetServerMap.NodeData}
           >
             {!shouldHideScatter() && application && (
               <>
@@ -310,7 +323,7 @@ export const ServerMapChartsBoardFetcher = ({
                   <div className="h-7">
                     {currentServer?.agentId && (
                       <ApdexScore
-                        nodeData={currentTargetData as GetServerMap.NodeData}
+                        nodeData={serverMapCurrentTarget as GetServerMap.NodeData}
                         agentId={currentServer?.agentId}
                       />
                     )}

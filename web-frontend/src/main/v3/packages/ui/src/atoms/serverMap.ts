@@ -23,6 +23,12 @@ export type CurrentTarget = {
   };
 };
 
+export type NewServerMapCurrentTarget = Omit<CurrentTarget, 'nodes' | 'edges'> & {
+  nodes?: (Node & GetServerMap.NodeData)[];
+  edges?: (Edge & GetServerMap.LinkData)[];
+  data?: GetServerMap.NodeData | GetServerMap.LinkData; // serverMapData에서 선택된 노드나 엣지의 데이터
+};
+
 type ServerMapNodeDataArray = (GetServerMap.NodeData | FilteredMap.NodeData)[];
 type ServerMapNodeLinkArray = (GetServerMap.LinkData | FilteredMap.LinkData)[];
 
