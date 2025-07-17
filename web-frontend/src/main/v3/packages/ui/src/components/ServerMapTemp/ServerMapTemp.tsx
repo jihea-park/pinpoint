@@ -7,14 +7,8 @@ import {
   ServerMapCoreProps,
   ServerMapSkeleton,
 } from '@pinpoint-fe/ui/src/components';
-import { serverMapData } from '@pinpoint-fe/ui/src/atoms/serverMapMock';
-import { FilterWizard, getDefaultFilters } from '@pinpoint-fe/ui/src/components/FilterMap';
-import { SERVERMAP_MENU_FUNCTION_TYPE } from '@pinpoint-fe/ui/src/components/ServerMap/ServerMapMenu';
-import {
-  GetServerMap,
-  BASE_PATH,
-  FilteredMapType as FilteredMap,
-} from '@pinpoint-fe/ui/src/constants';
+import { FilterWizard } from '@pinpoint-fe/ui/src/components/FilterMap';
+import { GetServerMap, FilteredMapType as FilteredMap } from '@pinpoint-fe/ui/src/constants';
 import {
   useExperimentals,
   useGetServerMapDataV2,
@@ -22,21 +16,19 @@ import {
 } from '@pinpoint-fe/ui/src/hooks';
 import { IoMdClose } from 'react-icons/io';
 import {
-  getFilteredMapPath,
-  getFilteredMapQueryString,
   getServerMapPath,
   convertParamsToQueryString,
   getFormattedDateRange,
   getBaseNodeId,
   getServerImagePath,
 } from '@pinpoint-fe/ui/src/utils';
-import { Edge, MergedEdge, MergedNode, Node } from '@pinpoint-fe/server-map';
+import { MergedEdge, MergedNode } from '@pinpoint-fe/server-map';
+import { serverMapDataAtom, NewServerMapCurrentTarget } from '@pinpoint-fe/ui/src/atoms';
+import { useAtom } from 'jotai';
 import {
-  serverMapDataAtom,
-  serverMapCurrentTargetAtom,
-  NewServerMapCurrentTarget,
-} from '@pinpoint-fe/ui/src/atoms';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+  useFilterWizardOnClickApply,
+  useServerMapOnClickMenuItem,
+} from '@pinpoint-fe/ui/src/hooks/servermap';
 
 export interface ServerMapTempFetcherProps {
   serverMapCurrentTarget?: NewServerMapCurrentTarget;
@@ -68,7 +60,7 @@ export const ServerMapTempFetcher = ({
   const [showFilter, setShowFilter] = React.useState(false);
 
   // TODO: ServerMap.tsx에서 local state로 변경 필요
-  const setDataAtom = useSetAtom(serverMapDataAtom);
+  const [serverMapData, setServerMapDataAtom] = useAtom(serverMapDataAtom);
   // const [serverMapCurrentTarget, setServerMapCurrentTarget] = useAtom(serverMapCurrentTargetAtom);
 
   // console.log('serverMapCurrentTarget', serverMapCurrentTarget);
@@ -84,48 +76,16 @@ export const ServerMapTempFetcher = ({
   });
 
   React.useEffect(() => {
-    setDataAtom(data);
+    setServerMapDataAtom(data);
   }, [data]);
 
+  console.log('???', data);
+
   // FilterWizard
-  const onClickApply = React.useCallback((filterStates: FilteredMap.FilterState[]) => {
-    const filterState = filterStates[filterStates.length - 1];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let addedHint = {} as any;
-    let soureIsWas;
-
-    if (!filterState.applicationName) {
-      const link = (
-        serverMapData?.applicationMapData.linkDataArray as GetServerMap.LinkData[]
-      ).find(
-        (l) =>
-          l.key ===
-          `${filterState.fromApplication}^${filterState.fromServiceType}~${filterState.toApplication}^${filterState.toServiceType}`,
-      );
-      if (link) {
-        soureIsWas = link.sourceInfo.isWas;
-        addedHint =
-          link.sourceInfo.isWas && link.targetInfo.isWas
-            ? {
-                [link.targetInfo.applicationName]: link.filter?.outRpcList,
-              }
-            : {};
-      }
-    }
-
-    window.open(
-      `${BASE_PATH}${getFilteredMapPath(filterState, soureIsWas)}?from=${
-        searchParameters.from
-      }&to=${searchParameters.to}${getFilteredMapQueryString({
-        filterStates,
-        hint: {
-          addedHint,
-        },
-      })}
-                                  `,
-      '_blank',
-    );
-  }, []);
+  const handleClickApply = useFilterWizardOnClickApply<GetServerMap.LinkData>({
+    from: searchParameters.from,
+    to: searchParameters.to,
+  });
 
   // ServerMapCore
   const handleClickNode: ServerMapCoreProps['onClickNode'] = ({
@@ -212,60 +172,15 @@ export const ServerMapTempFetcher = ({
     }
   };
 
-  const onClickMenuItem = React.useCallback(
-    (type: SERVERMAP_MENU_FUNCTION_TYPE, data: Node | Edge) => {
-      if (type === SERVERMAP_MENU_FUNCTION_TYPE.FILTER_WIZARD) {
-        let serverInfos: Parameters<typeof getDefaultFilters>[1];
-        if ('type' in data) {
-          const nodeData = data as Node;
-          const node = (
-            serverMapData?.applicationMapData.nodeDataArray as GetServerMap.NodeData[]
-          ).find((n) => n.key === nodeData.id);
-          serverInfos = {
-            agents: node?.agents?.map((agent) => agent?.id),
-          };
-        } else if ('source' in data) {
-          const edgeData = data as Edge;
-          const link = (
-            serverMapData?.applicationMapData.linkDataArray as GetServerMap.LinkData[]
-          ).find((l) => l.key === edgeData.id);
-          serverInfos = {
-            fromAgents: link?.fromAgents?.map((agent) => agent?.id),
-            toAgents: link?.toAgents?.map((agent) => agent?.id),
-          };
-        }
-        setShowFilter(true);
-        setFilter(getDefaultFilters(data, serverInfos));
-      } else if (type === SERVERMAP_MENU_FUNCTION_TYPE.FILTER_TRANSACTION) {
-        const defaultFilterState = getDefaultFilters(data);
-        const link = (
-          serverMapData?.applicationMapData.linkDataArray as GetServerMap.LinkData[]
-        ).find((l) => l.key === data.id);
-        const addedHint =
-          link?.sourceInfo.isWas && link.targetInfo.isWas
-            ? {
-                [link.targetInfo.applicationName]: link.filter?.outRpcList,
-              }
-            : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ({} as any);
-
-        window.open(
-          `${BASE_PATH}${getFilteredMapPath(
-            defaultFilterState!,
-            link?.sourceInfo.isWas,
-          )}?from=${searchParameters.from}&to=${searchParameters.to}${getFilteredMapQueryString({
-            filterStates: [defaultFilterState!],
-            hint: {
-              addedHint,
-            },
-          })}
-                                        `,
-          '_blank',
-        );
-      }
-    },
-    [],
-  );
+  const handleClickMenuItem = useServerMapOnClickMenuItem<
+    GetServerMap.NodeData,
+    GetServerMap.LinkData
+  >({
+    from: searchParameters.from,
+    to: searchParameters.to,
+    setFilter,
+    setShowFilter,
+  });
 
   return (
     <div className="relative w-full h-full">
@@ -283,7 +198,7 @@ export const ServerMapTempFetcher = ({
                 hideStatus={true}
                 tempFilter={filter}
                 openConfigures={true}
-                onClickApply={onClickApply}
+                onClickApply={handleClickApply}
               />
             </div>
           )}
@@ -309,7 +224,7 @@ export const ServerMapTempFetcher = ({
                 })}`,
               );
             }}
-            onClickMenuItem={onClickMenuItem}
+            onClickMenuItem={handleClickMenuItem}
           />
         </>
       )}
