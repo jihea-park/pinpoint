@@ -78,6 +78,7 @@ export const getHintQueryParameter = ({
 }): FilteredMap.Hint => {
   if (addedHint) {
     if (isEmpty(currHint)) {
+      console.log('curHink~~~', currHint);
       return makeHintUrlFormat(addedHint);
     } else {
       const currHintOnServerFormat = makeServerFormat(currHint);
