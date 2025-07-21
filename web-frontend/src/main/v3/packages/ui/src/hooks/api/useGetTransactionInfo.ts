@@ -30,59 +30,6 @@ export const useGetTransactionInfo = () => {
     queryString ? `${END_POINTS.TRANSACTION_INFO}${queryString}` : null,
     swrConfigs,
   );
-  const mapData = getMapData(data);
-  const tableData = convertToTree(mapData, '');
 
-  return { data, tableData, isLoading, isValidating, mapData };
-};
-
-const getMapData = (data?: TransactionInfo.Response) => {
-  return data?.callStack.map((callStack, i) => {
-    return Object.entries(data?.callStackIndex).reduce((acc, curr) => {
-      if (curr[0] === 'agent' && !callStack[curr[1]]) {
-        return {
-          ...acc,
-          [curr[0]]: callStack[curr[1]],
-          attributedAgent: getAgentKey(data, i),
-        };
-      }
-      return {
-        ...acc,
-        [curr[0]]: callStack[curr[1]],
-      };
-    }, {} as TransactionInfo.CallStackKeyValueMap);
-  });
-};
-
-const convertToTree = (
-  items: TransactionInfo.CallStackKeyValueMap[] = [],
-  parentId?: string,
-): TransactionInfo.CallStackKeyValueMap[] => {
-  const result: TransactionInfo.CallStackKeyValueMap[] = [];
-
-  for (const item of items) {
-    if (item.parentId === parentId) {
-      const newItem: TransactionInfo.CallStackKeyValueMap = {
-        ...item,
-      };
-
-      const subRows = convertToTree(items, item.id);
-      if (subRows.length > 0) {
-        newItem.subRows = subRows;
-      }
-
-      result.push(newItem);
-    }
-  }
-
-  return result;
-};
-
-const getAgentKey = (datas: TransactionInfo.Response, rowIndex: number) => {
-  let agentKey = null;
-
-  for (let i = rowIndex - 1; agentKey === null; i--) {
-    agentKey = datas.callStack[i][20]; // 20th index indicates agentKey
-  }
-  return agentKey;
+  return { data, isLoading, isValidating };
 };

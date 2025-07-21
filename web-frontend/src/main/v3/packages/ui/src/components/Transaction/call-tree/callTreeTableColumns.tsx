@@ -1,7 +1,7 @@
 import {
   BASE_PATH,
   SEARCH_PARAMETER_DATE_FORMAT,
-  TransactionInfoType as TransactionInfo,
+  TransactionCallTree,
 } from '@pinpoint-fe/ui/src/constants';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -23,14 +23,14 @@ import {
 import { useTransactionSearchParameters } from '@pinpoint-fe/ui/src/hooks';
 
 export interface CallTreeTableColumnsProps {
-  metaData: TransactionInfo.Response;
-  onClickDetailView?: (data: TransactionInfo.CallStackKeyValueMap) => void;
+  metaData: TransactionCallTree.Response;
+  onClickDetailView?: (data: TransactionCallTree.CallStackKeyValueMap) => void;
 }
 
 export const callTreeTableColumns = ({
   metaData,
   onClickDetailView,
-}: CallTreeTableColumnsProps): ColumnDef<TransactionInfo.CallStackKeyValueMap>[] => [
+}: CallTreeTableColumnsProps): ColumnDef<TransactionCallTree.CallStackKeyValueMap>[] => [
   {
     accessorKey: 'index',
     header: '',
@@ -215,7 +215,7 @@ export const callTreeTableColumns = ({
   },
 ];
 
-const calcColor = (data: TransactionInfo.CallStackKeyValueMap) => {
+const calcColor = (data: TransactionCallTree.CallStackKeyValueMap) => {
   let hash = 0;
   let color = '#';
   const agent = data?.agent || data.attributedAgent;
@@ -231,8 +231,8 @@ const calcColor = (data: TransactionInfo.CallStackKeyValueMap) => {
 };
 
 const MethodCell = (props: {
-  metaData: TransactionInfo.Response;
-  rowData: TransactionInfo.CallStackKeyValueMap;
+  metaData: TransactionCallTree.Response;
+  rowData: TransactionCallTree.CallStackKeyValueMap;
   onClickDetailView: CallTreeTableColumnsProps['onClickDetailView'];
 }) => {
   const { application, transactionInfo } = useTransactionSearchParameters();
@@ -314,8 +314,8 @@ const MethodCell = (props: {
 };
 
 export const getExecPercentage = (
-  metaData: TransactionInfo.Response,
-  rowData: TransactionInfo.CallStackKeyValueMap,
+  metaData: TransactionCallTree.Response,
+  rowData: TransactionCallTree.CallStackKeyValueMap,
 ) => {
   const totalExcuteTime = metaData.callStackEnd - metaData.callStackStart;
   return ((rowData.end - rowData.begin) / totalExcuteTime) * 100;

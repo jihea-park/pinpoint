@@ -41,7 +41,7 @@ const tabList = [
 export const TransactionInfoFetcher = ({ disableHeader }: TransactionInfoFetcherProps) => {
   const navigate = useNavigate();
   const { application, transactionInfo } = useTransactionSearchParameters();
-  const { data, tableData, mapData } = useGetTransactionInfo();
+  const { data } = useGetTransactionInfo();
   const setTransactionInfo = useSetAtom(transactionInfoDatasAtom);
   const [currentTab, setCurrentTab] = useAtom(transactionInfoCurrentTabId);
   const { t } = useTranslation();
@@ -152,7 +152,7 @@ export const TransactionInfoFetcher = ({ disableHeader }: TransactionInfoFetcher
       {tabList.map((tab) => {
         let Content;
         if (tab.id === 'callTree') {
-          Content = <CallTree data={tableData} metaData={data} mapData={mapData || []} />;
+          Content = <CallTree />;
         } else if (tab.id === 'serverMap' && data) {
           Content = (
             <ServerMapCore

@@ -1,14 +1,14 @@
-import { TransactionInfoType as TransactionInfo } from '@pinpoint-fe/ui/src/constants';
+import { TransactionCallTree } from '@pinpoint-fe/ui/src/constants';
 import { VirtualizedDataTable, VirtualizedDataTableProps } from '../../DataTable';
 import { CallTreeTableColumnsProps, callTreeTableColumns } from '.';
 
 export interface CallTreeTableProps
   extends Omit<
-    VirtualizedDataTableProps<TransactionInfo.CallStackKeyValueMap, unknown>,
+    VirtualizedDataTableProps<TransactionCallTree.CallStackKeyValueMap, unknown>,
     'columns'
   > {
-  data: TransactionInfo.CallStackKeyValueMap[];
-  metaData: TransactionInfo.Response;
+  data: TransactionCallTree.CallStackKeyValueMap[];
+  metaData: TransactionCallTree.Response;
   onClickDetailView?: CallTreeTableColumnsProps['onClickDetailView'];
   filteredRowIds?: string[];
 }

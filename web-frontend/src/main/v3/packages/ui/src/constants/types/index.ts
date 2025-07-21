@@ -46,6 +46,7 @@ export * from './SystemMetricTags';
 export * from './TraceViewerData';
 export * from './Transaction';
 export * from './TransactionInfo';
+export * from './TransactionCallTree';
 export * from './TransactionMetaData';
 export * from './UrlStatChart';
 export * from './UrlStatSummary';
