@@ -79,8 +79,6 @@ export const ServerMapTempFetcher = ({
     setServerMapDataAtom(data);
   }, [data]);
 
-  console.log('???', data);
-
   // FilterWizard
   const handleClickApply = useFilterWizardOnClickApply<GetServerMap.LinkData>({
     from: searchParameters.from,

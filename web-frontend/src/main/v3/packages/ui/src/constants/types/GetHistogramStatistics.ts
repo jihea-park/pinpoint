@@ -10,18 +10,20 @@ export namespace GetHistogramStatistics {
     wasOnly: boolean;
     bidirectional: boolean;
     useStatisticsAgentState: boolean;
-    nodeName: string;
+    nodeKey?: string;
   }
 
   export interface Response {
-    currentServerTime: number;
-    serverList: ServerList;
-    responseStatistics: ResponseStatistics;
-    histogram: Histogram;
     agentHistogram: AgentHistogram;
     agentResponseStatistics: AgentResponseStatistics;
-    timeSeriesHistogram: TimeSeriesHistogram[];
     agentTimeSeriesHistogram: AgentTimeSeriesHistogram;
+    currentServerTime: number;
+    histogram: Histogram;
+    instanceCount: number;
+    instanceErrorCount: number;
+    responseStatistics: ResponseStatistics;
+    serverList: ServerList;
+    timeSeriesHistogram: TimeSeriesHistogram[];
   }
 
   export interface ServerList {

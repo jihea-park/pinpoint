@@ -15,11 +15,9 @@ import {
   MergedServerSearchList,
   MergedServerSearchListProps,
   Drawer,
-  ServerChartsBoard,
   ScatterChartStatic,
   ChartsBoardHeader,
 } from '@pinpoint-fe/ui/src/components';
-import { ServerList } from '@pinpoint-fe/web/src/components/ServerList/ServerList';
 import { GetServerMap } from '@pinpoint-fe/ui/src/constants';
 import {
   useExperimentals,
@@ -29,17 +27,16 @@ import {
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 import { PiArrowSquareOut } from 'react-icons/pi';
 import {
-  currentServerAtom,
   CurrentTarget,
   NewServerMapCurrentTarget,
   scatterDataAtom,
   serverMapChartTypeAtom,
-  serverMapCurrentTargetAtom,
 } from '@pinpoint-fe/ui/src/atoms';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { getServerImagePath } from '@pinpoint-fe/ui/src/utils';
 import { cn } from '@pinpoint-fe/ui/src/lib';
 import { RxChevronRight } from 'react-icons/rx';
+import { ServerListTemp } from '@pinpoint-fe/ui/src/components/ServerList/ServerListTemp';
 
 export interface ServerMapChartsBoardProps extends ServerMapChartsBoardFetcherProps {}
 
@@ -84,27 +81,22 @@ export const ServerMapChartsBoardFetcher = ({
   const { application, dateRange } = useServerMapSearchParameters();
 
   const chartType = useAtomValue(serverMapChartTypeAtom);
-
-  const currentServer = useAtomValue(currentServerAtom);
   const scatterData = useAtomValue(scatterDataAtom);
 
   // console.log('currentServer', currentServer);
   // console.log('application', application);
-  console.log('serverMapCurrentTarget', serverMapCurrentTarget);
+  // console.log('serverMapCurrentTarget', serverMapCurrentTarget);
   // console.log('currentTargetData', currentTargetData);
 
   const [openServerView, setOpenServerView] = React.useState(false);
-  const [openServerViewTransitionEnd, setServerViewTransitionEnd] = React.useState(false);
   const [isScatterDataOutdated, setIsScatterDataOutdated] = React.useState(chartType !== 'scatter');
+  const [currentServer, setCurrentServer] = React.useState<string>('');
 
   const useStatisticsAgentState = experimentalOption.statisticsAgentState.value || true;
 
   const { data, isLoading } = useGetServerMapGetResponseTimeHistogramDataV2({
     useStatisticsAgentState,
-    nodeName:
-      serverMapCurrentTarget?.hasOwnProperty('data') && !serverMapCurrentTarget?.data
-        ? ''
-        : serverMapCurrentTarget?.applicationName || application?.applicationName || '',
+    nodeKey: serverMapCurrentTarget?.data?.key,
   });
 
   React.useEffect(() => {
@@ -119,6 +111,15 @@ export const ServerMapChartsBoardFetcher = ({
 
     setIsScatterDataOutdated(true);
   }, [dateRange, scatterData]);
+
+  React.useEffect(() => {
+    // VIEW SERVERS가 열릴 때 마다 currentServer를 가장 첫 번째 서버로 초기화
+    if (data && openServerView) {
+      const firstGroupKey = Object.keys(data?.serverList)?.[0];
+      const firstServerKey = Object.keys(data?.serverList[firstGroupKey]?.instanceList || {})?.[0];
+      setCurrentServer(firstServerKey || '');
+    }
+  }, [openServerView, data]);
 
   const getClickedMergedNodeList = ({ nodes, edges }: NewServerMapCurrentTarget) => {
     if (nodes?.length) {
@@ -140,6 +141,7 @@ export const ServerMapChartsBoardFetcher = ({
       type: 'node',
       nodes: serverMapCurrentTarget?.nodes,
       edges: serverMapCurrentTarget?.edges,
+      data: nodeData,
     });
   };
 
@@ -192,7 +194,7 @@ export const ServerMapChartsBoardFetcher = ({
     const hasNodesOrEdges = serverMapCurrentTarget?.nodes || serverMapCurrentTarget?.edges;
     // const isCurrentTargetUndefined = currentTargetData === undefined;
     // const isEdge = serverMapCurrentTarget?.type === 'edge';
-    const isNode = serverMapCurrentTarget?.type === 'node';
+    // const isNode = serverMapCurrentTarget?.type === 'node';
     const hasServerList = Object.keys(data?.serverList || {}).length > 0;
 
     if (hasNodesOrEdges) {
@@ -217,7 +219,7 @@ export const ServerMapChartsBoardFetcher = ({
               <span className="ml-2">VIEW SERVERS</span>
             </Button>
             <ChartTypeButtons />
-            <InstanceCount nodeData={serverMapCurrentTarget as GetServerMap.NodeData} />
+            <InstanceCount nodeData={(data || {}) as GetServerMap.NodeData} />
           </div>
         ) : !shouldHideScatter() ? (
           <div className="flex items-center h-12 py-2.5 px-4 gap-2">
@@ -272,7 +274,8 @@ export const ServerMapChartsBoardFetcher = ({
         }
         timestamp={timestamp}
         nodeData={
-          (serverMapCurrentTarget?.data as GetServerMap.NodeData)?.isAuthorized === false
+          (serverMapCurrentTarget?.data as GetServerMap.NodeData)?.isAuthorized === false ||
+          (serverMapCurrentTarget && !serverMapCurrentTarget?.data)
             ? undefined
             : (serverData as unknown as GetServerMap.NodeData)
         }
@@ -287,7 +290,6 @@ export const ServerMapChartsBoardFetcher = ({
           width: currentPanelWidth + SERVER_LIST_WIDTH,
           right: currentPanelWidth + resizeHandleWidth,
         }}
-        afterOpenChange={(openChange) => setServerViewTransitionEnd(openChange)}
         onClose={() => setOpenServerView(false)}
       >
         <div style={{ width: SERVER_LIST_WIDTH }}>
@@ -302,39 +304,58 @@ export const ServerMapChartsBoardFetcher = ({
               {serverMapCurrentTarget?.applicationName || application?.applicationName}
             </div>
           </div>
-          <ServerList disableFetch={!openServerView} />
+          <ServerListTemp
+            currentServer={currentServer}
+            data={data}
+            className={'border-t border-r bg-neutral-100'}
+            onClick={(agentId) => {
+              setCurrentServer(agentId || '');
+            }}
+          />
         </div>
         <div style={{ width: currentPanelWidth }}>
-          <ServerChartsBoard
+          <ChartsBoard
             header={
               <div className="flex items-center h-12 gap-1 font-semibold border-b-1 shrink-0">
                 <div className="flex items-center">
                   <RxChevronRight />
                 </div>
-                {currentServer?.agentId}
+                {currentServer}
               </div>
             }
-            disableFetch={!openServerView && !openServerViewTransitionEnd}
-            nodeData={serverMapCurrentTarget as GetServerMap.NodeData}
+            timestamp={timestamp}
+            nodeData={
+              currentServer
+                ? ({
+                    histogram: data?.agentHistogram[currentServer] || {},
+                    responseStatistics: data?.agentResponseStatistics[currentServer] || {},
+                    timeSeriesHistogram:
+                      data?.agentTimeSeriesHistogram[currentServer]?.map((tsh) => {
+                        return {
+                          ...tsh,
+                          values: tsh?.values?.map((v) => v?.[1]),
+                        };
+                      }) || [],
+                  } as unknown as GetServerMap.NodeData)
+                : undefined
+            }
           >
             {!shouldHideScatter() && application && (
               <>
                 <div className="w-full p-5 mb-12 aspect-[1.618] relative">
                   <div className="h-7">
-                    {currentServer?.agentId && (
+                    {currentServer && (
                       <ApdexScore
-                        nodeData={serverMapCurrentTarget as GetServerMap.NodeData}
-                        agentId={currentServer?.agentId}
+                        nodeData={(serverMapCurrentTarget as GetServerMap.NodeData) || application}
+                        agentId={currentServer}
                       />
                     )}
                   </div>
                   <ScatterChartStatic
                     application={serverMapCurrentTarget!}
-                    data={
-                      isScatterDataOutdated ? [] : scatterData.acc[currentServer?.agentId || '']
-                    }
+                    data={isScatterDataOutdated ? [] : scatterData.acc[currentServer || '']}
                     range={[dateRange.from.getTime(), dateRange.to.getTime()]}
-                    selectedAgentId={currentServer?.agentId || ''}
+                    selectedAgentId={currentServer || ''}
                   />
                   {isScatterDataOutdated && (
                     <div className="absolute top-0 left-0 z-[1000] flex flex-col items-center justify-center w-full h-[calc(100%+48px)] bg-background/50 text-center">
@@ -349,7 +370,7 @@ export const ServerMapChartsBoardFetcher = ({
                 <Separator />
               </>
             )}
-          </ServerChartsBoard>
+          </ChartsBoard>
         </div>
       </Drawer>
     </>

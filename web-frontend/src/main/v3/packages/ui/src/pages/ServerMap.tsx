@@ -49,6 +49,8 @@ export const ServerMapPage = ({
   const [serverMapCurrentTarget, setServerMapCurrentTarget] = React.useState<
     NewServerMapCurrentTarget | undefined
   >();
+
+  // console.log('serverMapCurrentTarget', serverMapCurrentTarget);
   // const serverMapData = useAtomValue(serverMapDataAtom);
 
   const { t } = useTranslation();

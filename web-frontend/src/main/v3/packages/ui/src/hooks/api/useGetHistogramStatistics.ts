@@ -12,8 +12,8 @@ const getQueryString = (queryParams: Partial<GetHistogramStatistics.Parameters>)
     queryParams.applicationName &&
     queryParams.serviceTypeName &&
     queryParams.from &&
-    queryParams.to &&
-    queryParams.nodeName
+    queryParams.to
+    // queryParams.nodeKey
   ) {
     return '?' + convertParamsToQueryString(queryParams);
   }
@@ -22,10 +22,10 @@ const getQueryString = (queryParams: Partial<GetHistogramStatistics.Parameters>)
 
 export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
   useStatisticsAgentState,
-  nodeName,
+  nodeKey,
 }: {
   useStatisticsAgentState?: boolean;
-  nodeName: string;
+  nodeKey?: string;
 }) => {
   const { dateRange, search, application, queryOption } = useServerMapSearchParameters();
   const from = dateRange.from.getTime();
@@ -41,7 +41,7 @@ export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
     serviceTypeName: application?.serviceType,
     applicationName: application?.applicationName,
     useStatisticsAgentState,
-    nodeName,
+    nodeKey,
   });
   const queryString = getQueryString(queryParams);
 
@@ -55,7 +55,7 @@ export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
       wasOnly: !!queryOption.wasOnly,
       bidirectional: !!queryOption.bidirectional,
       useStatisticsAgentState,
-      nodeName,
+      nodeKey,
       from,
       to,
     }));
@@ -66,7 +66,7 @@ export const useGetServerMapGetResponseTimeHistogramDataV2 = ({
     to,
     search,
     useStatisticsAgentState,
-    nodeName,
+    nodeKey,
   ]);
 
   const { data, isLoading } = useQuery<GetHistogramStatistics.Response>({
