@@ -24,6 +24,7 @@ export interface ServerMapProps extends Pick<React.HTMLProps<HTMLDivElement>, 'c
   baseNodeId: string;
   customTheme?: ServerMapTheme;
   forceLayoutUpdate?: boolean;
+  disableHighlight?: boolean;
   onClickNode?: ClickEventHandler<MergedNode>;
   onClickEdge?: ClickEventHandler<MergedEdge>;
   onClickBackground?: ClickEventHandler<{}>;
@@ -38,6 +39,7 @@ export const ServerMap = ({
   data,
   customTheme = {},
   baseNodeId,
+  disableHighlight,
   forceLayoutUpdate,
   onClickNode,
   onClickEdge,
@@ -55,6 +57,15 @@ export const ServerMap = ({
   const layoutRef = React.useRef<cytoscape.Layouts>();
   const serverMapTheme = getTheme(customTheme);
   const [selectedElementId, setSelectedElementId] = React.useState('');
+
+  const applySelectionStyles = React.useCallback(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    cy.nodes().forEach((node) => {
+      const isSelected = !!node.data('isSelected');
+      node.style(isSelected ? serverMapTheme.node?.selected! : serverMapTheme.node?.default!);
+    });
+  }, [serverMapTheme]);
 
   React.useEffect(() => {
     return () => {
@@ -148,10 +159,17 @@ export const ServerMap = ({
                 sourceNode.inside() && targetNode.inside() && cy.add({ data }); // add edge
               });
             } else {
+              // update existing node data so style (e.g., isSelected) reflects latest data
+              const { data } = newNodes.find(({ data }) => data.id === key)!;
+              const node = cy.getElementById(key);
+              node.data({ ...node.data(), ...data });
               return;
             }
           });
         });
+
+        // Apply selection-based styles after elements updated
+        applySelectionStyles();
 
         if (!layoutRef.current || forceLayoutUpdate) {
           layoutRef.current = cy?.layout({
@@ -328,8 +346,12 @@ export const ServerMap = ({
   }, [onClickNode, onClickEdge, onClickBackground]);
 
   const highlightNode = (target: cytoscape.CollectionReturnValue) => {
+    if (disableHighlight) {
+      return;
+    }
     const cy = cyRef.current!;
-    cy.nodes().style(serverMapTheme.node?.default!);
+    // Use selection-based baseline styles instead of resetting to default for all
+    applySelectionStyles();
     cy.edges().style(serverMapTheme.edge?.default!);
     cy.getElementById(baseNodeId).style(serverMapTheme.node?.main!);
     target.style(serverMapTheme.node?.highlight!);
@@ -337,9 +359,13 @@ export const ServerMap = ({
   };
 
   const highlightEdge = (target: cytoscape.CollectionReturnValue) => {
+    if (disableHighlight) {
+      return;
+    }
     const cy = cyRef.current!;
 
-    cy.nodes().style(serverMapTheme.node?.default!);
+    // Use selection-based baseline styles instead of resetting to default for all
+    applySelectionStyles();
     cy.edges().style(serverMapTheme.edge?.default!);
     cy.getElementById(baseNodeId).style(serverMapTheme.node?.main!);
     target.connectedNodes().style({ 'border-color': serverMapTheme.node?.highlight?.['border-color']! });

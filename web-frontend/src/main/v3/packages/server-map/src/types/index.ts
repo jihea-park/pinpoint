@@ -3,6 +3,7 @@ export interface Node {
   label: string;
   type?: string;
   imgPath?: string;
+  isSelected?: boolean;
   transactionInfo?: {
     good: number;
     slow: number;

@@ -34,6 +34,7 @@ export type ServerMapTheme = {
   node?: {
     default?: Css.Node;
     highlight?: Css.Node;
+    selected?: Css.Node;
     main?: Css.Node;
   };
   edge?: {
@@ -83,6 +84,9 @@ export const defaultTheme: DeepNonNullable<ServerMapTheme> = {
       'font-weight': 'bold',
       'font-size': 14,
       'border-color': '#4A61D1',
+    },
+    selected: {
+      'background-color': '#94a3b8',
     },
     main: {
       'font-weight': 'bold',

@@ -35,6 +35,11 @@ export const TraceServerMapFetcher = ({}: TraceServerMapFetcherProps) => {
         // @ts-ignore
         applicationMapData: data.applicationMapData,
       })}
+      // onSelectNode={(node, allSelectedNodes) => {
+      //   console.log('selected node', node);
+      //   console.log('allSelectedNodes', allSelectedNodes);
+      // }}
+      // disableHighlight
       disableMenu
     />
   );

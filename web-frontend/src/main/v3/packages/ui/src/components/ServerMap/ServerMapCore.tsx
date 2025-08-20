@@ -45,6 +45,7 @@ export interface ServerMapCoreProps extends Omit<ServerMapComponentProps, 'data'
   queryOption?: ServerMapQueryOptionProps['queryOption'];
   onApplyChangedOption?: ServerMapQueryOptionProps['onApply'];
   disableMenu?: boolean;
+  onSelectNode?: (selectedNode: Node, allSelectedNodes: Node[]) => void;
 }
 
 export const ServerMapCore = ({
@@ -52,6 +53,7 @@ export const ServerMapCore = ({
   isLoading,
   error,
   baseNodeId,
+  onSelectNode,
   onClickNode,
   onClickEdge,
   onClickMenuItem,
@@ -88,6 +90,11 @@ export const ServerMapCore = ({
     nodes: [],
     edges: [],
   });
+  const [selectedNodes, setSelectedNodes] = React.useState<Node[]>([]);
+
+  React.useEffect(() => {
+    setSelectedNodes([]);
+  }, [data]);
 
   useOnClickOutside(popperContentRef, () => {
     setPopperContentType(undefined);
@@ -101,7 +108,9 @@ export const ServerMapCore = ({
     allServiceTypes.current = Array.from(nodeTypes);
 
     const nodes = nodeDataArray.map((node) => {
+      const isSelected = selectedNodes.some((selectedNode) => selectedNode.id === node.key);
       return {
+        isSelected,
         id: node.key,
         label: node.applicationName,
         type: node.serviceType,
@@ -129,7 +138,7 @@ export const ServerMapCore = ({
     }));
 
     setServerMapData({ nodes, edges });
-  }, [data, unCheckedServiceTypes]);
+  }, [data, unCheckedServiceTypes, selectedNodes]);
 
   useUpdateEffect(() => {
     onMergeStateChange?.();
@@ -238,6 +247,20 @@ export const ServerMapCore = ({
       setPopperContentType(SERVERMAP_MENU_CONTENT_TYPE.NODE);
       rightClickTargetRef.current = params.data;
     }
+
+    if (eventType === 'left' && onSelectNode) {
+      setSelectedNodes((prevSelectedNodes) => {
+        const isExist = prevSelectedNodes.some((node) => node.id === params.data?.id);
+        const newSelectedNodes = isExist
+          ? prevSelectedNodes.filter((node) => node.id !== params.data?.id)
+          : [...prevSelectedNodes, params.data!];
+        onSelectNode?.(params.data!, newSelectedNodes);
+        return newSelectedNodes;
+      });
+
+      return;
+    }
+
     onClickNode?.(params);
   };
 
@@ -290,6 +313,7 @@ export const ServerMapCore = ({
     baseNode?.select();
     baseNode?.emit('tap');
     setPopperContentType(undefined);
+    setSelectedNodes([]);
   };
 
   const locateCurrentTarget = () => {
