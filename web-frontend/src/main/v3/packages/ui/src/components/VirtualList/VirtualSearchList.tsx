@@ -9,6 +9,7 @@ export interface VirtualSearchListProps {
   inputClassName?: string;
   inputContainerClassName?: string;
   placeHolder?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const VirtualSearchList = ({
@@ -17,6 +18,7 @@ export const VirtualSearchList = ({
   inputClassName,
   inputContainerClassName,
   placeHolder = 'Input keyword...',
+  onKeyDown,
 }: VirtualSearchListProps) => {
   const [filterKeyword, setFilterKeyword] = React.useState('');
 
@@ -30,6 +32,7 @@ export const VirtualSearchList = ({
           className={cn(inputClassName)}
           onChange={(e) => setFilterKeyword(e.target.value)}
           placeholder={placeHolder}
+          onKeyDown={onKeyDown}
         />
       </div>
       {typeof children === 'function'
