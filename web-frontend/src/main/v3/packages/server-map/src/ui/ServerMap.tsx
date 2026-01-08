@@ -1,6 +1,9 @@
 import React from 'react';
 import cytoscape, { InputEventObject } from 'cytoscape';
 import dagre, { DagreLayoutOptions } from 'cytoscape-dagre';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
 
 import { Node, Edge, MergedNode, MergedEdge, MergeInfo } from '../types';
 import { getMergedData } from '../core/merge';
@@ -9,6 +12,7 @@ import { GraphStyle, ServerMapTheme } from '../constants/style/theme';
 import { keyBy } from 'lodash';
 
 cytoscape.use(dagre);
+cytoscape.use(compoundDragAndDrop);
 
 type ClickEventHandler<T> = (param: {
   data?: T;
@@ -54,6 +58,115 @@ export const ServerMap = ({
   style,
   cy,
 }: ServerMapProps) => {
+  const tempParentNode = {
+    id: '1',
+    label: 'ParentNode',
+    type: 'serviceGroup',
+  };
+  const tempChildNode1 = {
+    parent: '1',
+    id: '2',
+    label: 'ChildNode 1',
+    type: 'SPRING_BOOT',
+    imgPath: '/img/servers/SPRING_BOOT.png',
+    apdex: {
+      apdexScore: 0.9,
+      apdexFormula: {
+        satisfiedCount: 10,
+        toleratingCount: 5,
+        totalSamples: 15,
+      },
+    },
+  };
+  const tempChildNode2 = {
+    parent: '1',
+    id: '3',
+    label: 'ChildNode 2',
+    type: 'TOMCAT',
+    imgPath: '/img/servers/TOMCAT.png',
+    apdex: {
+      apdexScore: 0.9,
+      apdexFormula: {
+        satisfiedCount: 10,
+        toleratingCount: 5,
+        totalSamples: 15,
+      },
+    },
+  };
+  const tempParentNode2 = {
+    id: 'parent2',
+    label: 'ParentNode',
+    type: 'serviceGroup',
+    // imgPath: '/img/servers/UNKNOWN.png',
+  };
+  const tempChildNode3 = {
+    parent: 'parent2',
+    id: 'child3',
+    label: 'ChildNode 1',
+    type: 'SPRING_BOOT',
+    imgPath: '/img/servers/SPRING_BOOT.png',
+    apdex: {
+      apdexScore: 0.9,
+      apdexFormula: {
+        satisfiedCount: 10,
+        toleratingCount: 5,
+        totalSamples: 15,
+      },
+    },
+  };
+  const tempChildNode4 = {
+    parent: 'parent2',
+    id: 'child4',
+    label: 'ChildNode 2',
+    type: 'TOMCAT',
+    imgPath: '/img/servers/TOMCAT.png',
+    apdex: {
+      apdexScore: 0.9,
+      apdexFormula: {
+        satisfiedCount: 10,
+        toleratingCount: 5,
+        totalSamples: 15,
+      },
+    },
+  };
+
+  React.useEffect(() => {
+    data.nodes.push(tempParentNode);
+    data.nodes.push(tempChildNode1);
+    data.nodes.push(tempChildNode2);
+    // data.nodes.push(tempParentNode2);
+    // data.nodes.push(tempChildNode3);
+    // data.nodes.push(tempChildNode4);
+    data.edges.push({
+      id: '1-2',
+      source: '1',
+      target: '2',
+      transactionInfo: {
+        avgResponseTime: 0,
+        totalCount: 4,
+      },
+    });
+    data.edges.push({
+      id: '1-3',
+      source: '1',
+      target: '3',
+      transactionInfo: {
+        avgResponseTime: 0,
+        totalCount: 3,
+      },
+    });
+    data.edges.push({
+      id: 'APIGW-DEV-OPEN-PGD1^VERTX-1',
+      source: 'DEV-PINPOINT-WEB-BOOT^SPRING_BOOT',
+      target: '1',
+      transactionInfo: {
+        avgResponseTime: 0,
+        totalCount: 7,
+      },
+    });
+  }, [data]);
+
+  console.log('data', data);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const cyRef = React.useRef<cytoscape.Core | undefined>(undefined);
   const layoutRef = React.useRef<cytoscape.Layouts | undefined>(undefined);
@@ -242,6 +355,22 @@ export const ServerMap = ({
             }
           }
         }
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        cy.compoundDragAndDrop({
+          grabbedNode: (node: any) => {
+            if (node.data().type === 'serviceGroup') {
+              return false;
+            }
+            return true;
+          },
+          dropTarget: (target: any) => {
+            if (target.data().type !== 'node') {
+              return true;
+            }
+            return false;
+          },
+        });
       }
     }
   }, [data]);
