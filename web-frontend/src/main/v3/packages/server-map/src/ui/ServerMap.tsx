@@ -1,9 +1,6 @@
 import React from 'react';
 import cytoscape, { InputEventObject } from 'cytoscape';
 import dagre, { DagreLayoutOptions } from 'cytoscape-dagre';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
 
 import { Node, Edge, MergedNode, MergedEdge, MergeInfo } from '../types';
 import { getMergedData } from '../core/merge';
@@ -12,7 +9,6 @@ import { GraphStyle, ServerMapTheme } from '../constants/style/theme';
 import { keyBy } from 'lodash';
 
 cytoscape.use(dagre);
-cytoscape.use(compoundDragAndDrop);
 
 type ClickEventHandler<T> = (param: {
   data?: T;
@@ -166,7 +162,7 @@ export const ServerMap = ({
     });
   }, [data]);
 
-  console.log('data', data);
+  // console.log('data', data);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const cyRef = React.useRef<cytoscape.Core | undefined>(undefined);
   const layoutRef = React.useRef<cytoscape.Layouts | undefined>(undefined);
@@ -355,22 +351,6 @@ export const ServerMap = ({
             }
           }
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        cy.compoundDragAndDrop({
-          grabbedNode: (node: any) => {
-            if (node.data().type === 'serviceGroup') {
-              return false;
-            }
-            return true;
-          },
-          dropTarget: (target: any) => {
-            if (target.data().type !== 'node') {
-              return true;
-            }
-            return false;
-          },
-        });
       }
     }
   }, [data]);
