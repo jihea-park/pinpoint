@@ -323,7 +323,9 @@ export const getMergedData = (data: { nodes: Node[]; edges: Edge[] }, renderNode
         return {
           data: {
             ...node,
-            imgArr: [node?.imgPath, getNodeSVGString(node, renderNode)],
+            imgArr: node?.imgPath
+              ? [node.imgPath, getNodeSVGString(node, renderNode)]
+              : [getNodeSVGString(node, renderNode)],
           },
         };
       }),
