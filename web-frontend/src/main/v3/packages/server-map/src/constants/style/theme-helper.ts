@@ -66,6 +66,18 @@ export const getServerMapStyle = ({
       },
     },
     {
+      selector: 'node[type="collapsed"]', // 부모 노드만 선택
+      style: {
+        'background-opacity': 0.1, // 거의 투명하게
+        'border-width': 1, // 테두리만 보이게
+        'border-color': '#0f0f96', // 테두리 색
+        'border-opacity': 0,
+        padding: 0, // 자식 노드와 테두리 사이 간격
+        width: 1,
+        height: 1,
+      },
+    },
+    {
       // 부모 노드 스타일 - 상자처럼만 보이게!
       selector: ':parent', // 부모 노드만 선택
       style: {

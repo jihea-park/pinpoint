@@ -25,6 +25,14 @@ const tempParentNode = {
   label: 'ParentNode',
   type: 'serviceGroup',
 };
+
+const tempParentNodeCollapsed = {
+  id: '1-collapsed',
+  parent: '1',
+  label: 'ParentNode Collapsed',
+  type: 'collapsed',
+};
+
 const tempChildNode1 = {
   parent: '1',
   id: '2',
@@ -59,7 +67,7 @@ const tempChildNode2 = {
 const tempEdge1 = {
   id: `${tempBaseNodeId}-1`,
   source: tempBaseNodeId,
-  target: '1',
+  target: '1-collapsed',
   transactionInfo: {
     avgResponseTime: 0,
     totalCount: 7,
@@ -123,7 +131,7 @@ export const ServerMap = ({
   cy,
 }: ServerMapProps) => {
   const [data, setData] = React.useState<{ nodes: Node[]; edges: Edge[] }>({
-    nodes: initialData.nodes.concat(tempParentNode),
+    nodes: initialData.nodes.concat(tempParentNode, tempParentNodeCollapsed),
     edges: initialData.edges.concat(tempEdge1),
   });
 
@@ -433,7 +441,7 @@ export const ServerMap = ({
               setData((prevData) => {
                 return {
                   nodes: prevData.nodes
-                    .filter((node) => node.id !== '1')
+                    .filter((node) => !node.id.includes('collapsed'))
                     .concat(tempParentNode, tempChildNode1, tempChildNode2),
                   // edges: prevData.edges,
                   edges: prevData.edges.filter((edge) => edge.target !== '1').concat(tempEdge2, tempEdge3),
