@@ -18,6 +18,74 @@ type ClickEventHandler<T> = (param: {
   isLeftNode?: boolean;
 }) => void;
 
+const tempBaseNodeId = 'DEV-PINPOINT-WEB-BOOT^SPRING_BOOT';
+
+const tempParentNode = {
+  id: '1',
+  label: 'ParentNode',
+  type: 'serviceGroup',
+};
+const tempChildNode1 = {
+  parent: '1',
+  id: '2',
+  label: 'ChildNode 1',
+  type: 'SPRING_BOOT',
+  imgPath: '/img/servers/SPRING_BOOT.png',
+  apdex: {
+    apdexScore: 0.9,
+    apdexFormula: {
+      satisfiedCount: 10,
+      toleratingCount: 5,
+      totalSamples: 15,
+    },
+  },
+};
+const tempChildNode2 = {
+  parent: '1',
+  id: '3',
+  label: 'ChildNode 2',
+  type: 'TOMCAT',
+  imgPath: '/img/servers/TOMCAT.png',
+  apdex: {
+    apdexScore: 0.9,
+    apdexFormula: {
+      satisfiedCount: 10,
+      toleratingCount: 5,
+      totalSamples: 15,
+    },
+  },
+};
+
+const tempEdge1 = {
+  id: `${tempBaseNodeId}-1`,
+  source: tempBaseNodeId,
+  target: '1',
+  transactionInfo: {
+    avgResponseTime: 0,
+    totalCount: 7,
+  },
+};
+
+const tempEdge2 = {
+  id: `${tempBaseNodeId}-2`,
+  source: tempBaseNodeId,
+  target: '2',
+  transactionInfo: {
+    avgResponseTime: 0,
+    totalCount: 5,
+  },
+};
+
+const tempEdge3 = {
+  id: `${tempBaseNodeId}-3`,
+  source: tempBaseNodeId,
+  target: '3',
+  transactionInfo: {
+    avgResponseTime: 0,
+    totalCount: 2,
+  },
+};
+
 export interface ServerMapProps extends Pick<React.HTMLProps<HTMLDivElement>, 'className' | 'style'> {
   data: {
     nodes: Node[];
@@ -38,7 +106,7 @@ export interface ServerMapProps extends Pick<React.HTMLProps<HTMLDivElement>, 'c
 }
 
 export const ServerMap = ({
-  data,
+  data: initialData,
   customTheme = {},
   baseNodeId,
   forceLayoutUpdate,
@@ -54,115 +122,12 @@ export const ServerMap = ({
   style,
   cy,
 }: ServerMapProps) => {
-  const tempParentNode = {
-    id: '1',
-    label: 'ParentNode',
-    type: 'serviceGroup',
-  };
-  const tempChildNode1 = {
-    parent: '1',
-    id: '2',
-    label: 'ChildNode 1',
-    type: 'SPRING_BOOT',
-    imgPath: '/img/servers/SPRING_BOOT.png',
-    apdex: {
-      apdexScore: 0.9,
-      apdexFormula: {
-        satisfiedCount: 10,
-        toleratingCount: 5,
-        totalSamples: 15,
-      },
-    },
-  };
-  const tempChildNode2 = {
-    parent: '1',
-    id: '3',
-    label: 'ChildNode 2',
-    type: 'TOMCAT',
-    imgPath: '/img/servers/TOMCAT.png',
-    apdex: {
-      apdexScore: 0.9,
-      apdexFormula: {
-        satisfiedCount: 10,
-        toleratingCount: 5,
-        totalSamples: 15,
-      },
-    },
-  };
-  const tempParentNode2 = {
-    id: 'parent2',
-    label: 'ParentNode',
-    type: 'serviceGroup',
-    // imgPath: '/img/servers/UNKNOWN.png',
-  };
-  const tempChildNode3 = {
-    parent: 'parent2',
-    id: 'child3',
-    label: 'ChildNode 1',
-    type: 'SPRING_BOOT',
-    imgPath: '/img/servers/SPRING_BOOT.png',
-    apdex: {
-      apdexScore: 0.9,
-      apdexFormula: {
-        satisfiedCount: 10,
-        toleratingCount: 5,
-        totalSamples: 15,
-      },
-    },
-  };
-  const tempChildNode4 = {
-    parent: 'parent2',
-    id: 'child4',
-    label: 'ChildNode 2',
-    type: 'TOMCAT',
-    imgPath: '/img/servers/TOMCAT.png',
-    apdex: {
-      apdexScore: 0.9,
-      apdexFormula: {
-        satisfiedCount: 10,
-        toleratingCount: 5,
-        totalSamples: 15,
-      },
-    },
-  };
+  const [data, setData] = React.useState<{ nodes: Node[]; edges: Edge[] }>({
+    nodes: initialData.nodes.concat(tempParentNode),
+    edges: initialData.edges.concat(tempEdge1),
+  });
 
-  React.useEffect(() => {
-    data.nodes.push(tempParentNode);
-    data.nodes.push(tempChildNode1);
-    data.nodes.push(tempChildNode2);
-    // data.nodes.push(tempParentNode2);
-    // data.nodes.push(tempChildNode3);
-    // data.nodes.push(tempChildNode4);
-    data.edges.push({
-      id: '1-2',
-      source: '1',
-      target: '2',
-      transactionInfo: {
-        avgResponseTime: 0,
-        totalCount: 4,
-      },
-    });
-    data.edges.push({
-      id: '1-3',
-      source: '1',
-      target: '3',
-      transactionInfo: {
-        avgResponseTime: 0,
-        totalCount: 3,
-      },
-    });
-    data.edges.push({
-      id: 'APIGW-DEV-OPEN-PGD1^VERTX-1',
-      source: 'DEV-PINPOINT-WEB-BOOT^SPRING_BOOT',
-      target: '1',
-      transactionInfo: {
-        avgResponseTime: 0,
-        totalCount: 7,
-      },
-    });
-  }, [data]);
-
-  // console.log('data', data);
+  console.log('data', data);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const cyRef = React.useRef<cytoscape.Core | undefined>(undefined);
   const layoutRef = React.useRef<cytoscape.Layouts | undefined>(undefined);
@@ -237,7 +202,10 @@ export const ServerMap = ({
 
           const oldNodeKeys = cy.nodes().map((node) => node.id());
           const newNodeKeys = newNodes.map(({ data }) => data.id);
+          const oldEdgeKeys = cy.edges().map((edge) => edge.id());
+          const newEdgeKeys = newEdges.map(({ data }) => data.id);
 
+          // Remove nodes that are no longer in the new data
           new Set([...oldNodeKeys, ...newNodeKeys]).forEach((key) => {
             const isOldNodes = oldNodeKeys.includes(key);
             const isNewNodes = newNodeKeys.includes(key);
@@ -264,6 +232,31 @@ export const ServerMap = ({
               });
             } else {
               return;
+            }
+          });
+
+          // Remove edges that are no longer in the new data
+          new Set([...oldEdgeKeys, ...newEdgeKeys]).forEach((key) => {
+            const isOldEdges = oldEdgeKeys.includes(key);
+            const isNewEdges = newEdgeKeys.includes(key);
+            const shouldRemove = isOldEdges && !isNewEdges;
+
+            if (shouldRemove) {
+              const edge = cy.getElementById(key);
+              edge.remove();
+            }
+          });
+
+          // Add edges that are new (but their nodes already exist)
+          newEdges.forEach(({ data }) => {
+            const edgeExists = cy.getElementById(data.id).inside();
+            if (!edgeExists) {
+              const sourceNode = cy.getElementById(data.source);
+              const targetNode = cy.getElementById(data.target);
+
+              if (sourceNode.inside() && targetNode.inside() && cy) {
+                cy.add({ data }); // add edge
+              }
             }
           });
         });
@@ -435,6 +428,22 @@ export const ServerMap = ({
               position,
               data: target.data(),
             });
+
+            if (target.data()?.id === '1') {
+              setData((prevData) => {
+                return {
+                  nodes: prevData.nodes
+                    .filter((node) => node.id !== '1')
+                    .concat(tempParentNode, tempChildNode1, tempChildNode2),
+                  // edges: prevData.edges,
+                  edges: prevData.edges.filter((edge) => edge.target !== '1').concat(tempEdge2, tempEdge3),
+                };
+              });
+            }
+
+            // console.log('target', target);
+            // console.log('position', position);
+            // console.log('renderedPosition', renderedPosition);
 
             setSelectedElementId(target.id());
           } else if (target.isEdge()) {
