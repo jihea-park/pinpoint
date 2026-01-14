@@ -57,9 +57,17 @@ export const getServerMapStyle = ({
       selector: 'node[type="serviceGroup"]', // 부모 노드만 선택
       style: {
         'background-opacity': 0.1, // 거의 투명하게
-        'background-color': '#0f0f96', // 연한 배경색
         'border-width': 1, // 테두리만 보이게
-        'border-color': '#0f0f96', // 테두리 색
+        padding: 10, // 자식 노드와 테두리 사이 간격
+        width: 5,
+        height: 5,
+      },
+    },
+    {
+      selector: 'node[type="serviceGroup2"]', // 부모 노드만 선택
+      style: {
+        'background-opacity': 0.1, // 거의 투명하게
+        'border-width': 1, // 테두리만 보이게
         padding: 10, // 자식 노드와 테두리 사이 간격
         width: 5,
         height: 5,
@@ -70,7 +78,17 @@ export const getServerMapStyle = ({
       style: {
         'background-opacity': 0.1, // 거의 투명하게
         'border-width': 1, // 테두리만 보이게
-        'border-color': '#0f0f96', // 테두리 색
+        'border-opacity': 0,
+        padding: 0, // 자식 노드와 테두리 사이 간격
+        width: 1,
+        height: 1,
+      },
+    },
+    {
+      selector: 'node[type="collapsed2"]', // 부모 노드만 선택
+      style: {
+        'background-opacity': 0.1, // 거의 투명하게
+        'border-width': 1, // 테두리만 보이게
         'border-opacity': 0,
         padding: 0, // 자식 노드와 테두리 사이 간격
         width: 1,
