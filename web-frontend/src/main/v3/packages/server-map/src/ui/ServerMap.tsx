@@ -21,21 +21,21 @@ type ClickEventHandler<T> = (param: {
 const tempBaseNodeId = 'DEV-PINPOINT-WEB-BOOT^SPRING_BOOT';
 
 const tempParentNode = {
-  id: '1',
+  id: 'parentNode1',
   label: 'ParentNode',
   type: 'serviceGroup',
 };
 
 const tempParentNodeCollapsed = {
-  id: '1-collapsed',
-  parent: '1',
+  id: 'collapsedNode1',
+  parent: 'parentNode1',
   label: 'ParentNode Collapsed',
   type: 'collapsed',
 };
 
 const tempChildNode1 = {
-  parent: '1',
-  id: '2',
+  parent: 'parentNode1',
+  id: 'childNode1',
   label: 'ChildNode 1',
   type: 'SPRING_BOOT',
   imgPath: '/img/servers/SPRING_BOOT.png',
@@ -49,8 +49,8 @@ const tempChildNode1 = {
   },
 };
 const tempChildNode2 = {
-  parent: '1',
-  id: '3',
+  parent: 'parentNode1',
+  id: 'childNode2',
   label: 'ChildNode 2',
   type: 'TOMCAT',
   imgPath: '/img/servers/TOMCAT.png',
@@ -63,34 +63,53 @@ const tempChildNode2 = {
     },
   },
 };
-
 const tempEdge1 = {
   id: `${tempBaseNodeId}-1`,
   source: tempBaseNodeId,
-  target: '1-collapsed',
+  target: 'collapsedNode1',
   transactionInfo: {
     avgResponseTime: 0,
     totalCount: 7,
   },
 };
-
 const tempEdge2 = {
   id: `${tempBaseNodeId}-2`,
   source: tempBaseNodeId,
-  target: '2',
+  target: 'childNode1',
   transactionInfo: {
     avgResponseTime: 0,
     totalCount: 5,
   },
 };
-
 const tempEdge3 = {
   id: `${tempBaseNodeId}-3`,
   source: tempBaseNodeId,
-  target: '3',
+  target: 'childNode2',
   transactionInfo: {
     avgResponseTime: 0,
     totalCount: 2,
+  },
+};
+
+const tempParentNode2 = {
+  id: 'parentNode2',
+  label: 'ParentNode2',
+  type: 'serviceGroup2',
+};
+const tempParentNodeCollapsed2 = {
+  id: 'collapsedNode2',
+  parent: 'parentNode2',
+  label: 'ParentNode2 Collapsed',
+  type: 'collapsed2',
+};
+
+const tempEdge11 = {
+  id: `${tempBaseNodeId}-11`,
+  source: tempBaseNodeId,
+  target: 'collapsedNode2',
+  transactionInfo: {
+    avgResponseTime: 0,
+    totalCount: 7,
   },
 };
 
@@ -131,8 +150,13 @@ export const ServerMap = ({
   cy,
 }: ServerMapProps) => {
   const [data, setData] = React.useState<{ nodes: Node[]; edges: Edge[] }>({
-    nodes: initialData.nodes.concat(tempParentNode, tempParentNodeCollapsed),
-    edges: initialData.edges.concat(tempEdge1),
+    nodes: initialData.nodes.concat([
+      tempParentNode,
+      tempParentNodeCollapsed,
+      tempParentNode2,
+      tempParentNodeCollapsed2,
+    ]),
+    edges: initialData.edges.concat([tempEdge1, tempEdge11]),
   });
 
   console.log('data', data);
@@ -437,14 +461,14 @@ export const ServerMap = ({
               data: target.data(),
             });
 
-            if (target.data()?.id === '1') {
+            if (target.data()?.id === 'parentNode1') {
               setData((prevData) => {
                 return {
                   nodes: prevData.nodes
-                    .filter((node) => !node.id.includes('collapsed'))
+                    .filter((node) => !node.id.includes('collapsedNode1'))
                     .concat(tempParentNode, tempChildNode1, tempChildNode2),
                   // edges: prevData.edges,
-                  edges: prevData.edges.filter((edge) => edge.target !== '1').concat(tempEdge2, tempEdge3),
+                  edges: prevData.edges.filter((edge) => edge.target !== 'parentNode1').concat(tempEdge2, tempEdge3),
                 };
               });
             }
