@@ -120,7 +120,7 @@ export const ErrorDetailDialog = ({
                   {hasParams && (
                     <>
                       <div className="text-muted-foreground">Parameters</div>
-                      <div className="grid grid-cols-[8rem_auto] gap-2 text-xs">
+                      <div className="grid grid-cols-[10rem_auto] gap-2 text-xs">
                         {Object.keys(params)
                           .sort()
                           .map((key) => {
