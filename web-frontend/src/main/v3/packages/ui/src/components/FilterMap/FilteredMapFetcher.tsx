@@ -56,7 +56,7 @@ export const FilteredMapFetcher = ({
 
           data?.applicationMapData?.nodeDataArray?.forEach((newNodeData) => {
             const existingIndex = nodeDataArray.findIndex(
-              (prevNodeData) => newNodeData.key === prevNodeData.key,
+              (prevNodeData) => newNodeData.serviceKey === prevNodeData.serviceKey,
             );
 
             if (existingIndex !== -1) {
@@ -77,7 +77,7 @@ export const FilteredMapFetcher = ({
 
           data?.applicationMapData?.linkDataArray?.forEach((newLinkData) => {
             const existingIndex = linkDataArray.findIndex(
-              (prevLinkData) => prevLinkData.key === newLinkData.key,
+              (prevLinkData) => prevLinkData.serviceKey === newLinkData.serviceKey,
             );
 
             if (existingIndex !== -1) {

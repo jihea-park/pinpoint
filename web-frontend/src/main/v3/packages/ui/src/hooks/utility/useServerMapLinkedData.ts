@@ -11,12 +11,12 @@ export const useServerMapLinkedData = ({
 }) => {
   return serverMapData?.linkDataArray.reduce(
     (acc, curr) => {
-      if (curr.from === currentTargetData?.key) {
+      if (curr.from === currentTargetData?.serviceKey) {
         acc?.to.push({
           applicationName: curr.targetInfo.applicationName,
           serviceTypeCode: curr.targetInfo.serviceTypeCode,
         });
-      } else if (curr.to === currentTargetData?.key) {
+      } else if (curr.to === currentTargetData?.serviceKey) {
         acc?.from.push({
           applicationName: curr.sourceInfo.applicationName,
           serviceTypeCode: curr.sourceInfo.serviceTypeCode,

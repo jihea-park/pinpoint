@@ -78,9 +78,9 @@ export const Realtime = ({ configuration }: RealtimeProps) => {
   }, [serverMapData, currentTargetData]);
 
   const handleClickMergedItem: MergedServerSearchListProps['onClickItem'] = (nodeData) => {
-    const { key, applicationName, serviceType } = nodeData;
+    const { serviceKey, applicationName, serviceType } = nodeData;
     setServerMapCurrentTarget({
-      id: key,
+      id: serviceKey,
       applicationName,
       serviceType,
       imgPath: getServerImagePath(nodeData),
@@ -98,7 +98,7 @@ export const Realtime = ({ configuration }: RealtimeProps) => {
         : [];
 
     return serverMapData?.applicationMapData.nodeDataArray
-      ?.filter(({ key }: GetServerMap.NodeData) => nodeIds.includes(key))
+      ?.filter(({ serviceKey }: GetServerMap.NodeData) => nodeIds.includes(serviceKey))
       .sort((node1, node2) => node2.totalCount - node1.totalCount);
   };
 

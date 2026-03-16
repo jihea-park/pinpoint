@@ -37,7 +37,7 @@ export function useServerMapOnClickMenuItem<
       if ('type' in data) {
         const nodeData = data as Node;
         const node = (serverMapData?.applicationMapData.nodeDataArray as T[]).find(
-          (n) => n.key === nodeData.id,
+          (n) => n.serviceKey === nodeData.id,
         );
         serverInfos = {
           agents: node?.agents?.map((agent) => agent.id),
@@ -45,7 +45,7 @@ export function useServerMapOnClickMenuItem<
       } else if ('source' in data) {
         const edgeData = data as Edge;
         const link = (serverMapData?.applicationMapData.linkDataArray as R[]).find(
-          (l) => l.key === edgeData.id,
+          (l) => l.serviceKey === edgeData.id,
         );
         serverInfos = {
           fromAgents: link?.fromAgents?.map((agent) => agent.id),
@@ -59,7 +59,7 @@ export function useServerMapOnClickMenuItem<
     } else if (type === SERVERMAP_MENU_FUNCTION_TYPE.FILTER_TRANSACTION) {
       const defaultFilterState = getDefaultFilters(data);
       const link = (serverMapData?.applicationMapData?.linkDataArray as R[])?.find(
-        (l) => l?.key === data?.id,
+        (l) => l?.serviceKey === data?.id,
       );
       const addedHint =
         link?.sourceInfo?.nodeCategory === GetServerMap.NodeCategory.SERVER &&

@@ -44,13 +44,13 @@ export const serverMapCurrentTargetDataAtom = atom((get) => {
     );
   } else if (currentTarget?.type === 'node') {
     return (serverMapData?.applicationMapData?.nodeDataArray as ServerMapNodeDataArray)?.find(
-      ({ key }) =>
-        key === currentTarget?.id ||
-        key === `${currentTarget?.applicationName}^${currentTarget?.serviceType}`,
+      ({ serviceKey }) =>
+        serviceKey === currentTarget?.id ||
+        serviceKey === `${currentTarget?.applicationName}^${currentTarget?.serviceType}`,
     );
   } else if (currentTarget?.type === 'edge') {
     return (serverMapData?.applicationMapData?.linkDataArray as ServerMapNodeLinkArray)?.find(
-      ({ key }) => key === currentTarget?.id,
+      ({ serviceKey }) => serviceKey === currentTarget?.id,
     );
   } else {
     return undefined;

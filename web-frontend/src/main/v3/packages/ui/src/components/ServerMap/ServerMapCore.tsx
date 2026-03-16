@@ -107,7 +107,7 @@ export const ServerMapCore = ({
 
     const nodes = nodeDataArray.map((node) => {
       return {
-        id: node.key,
+        id: node.serviceKey,
         label: node.applicationName,
         type: node.serviceType,
         apdex: node.apdex,
@@ -127,7 +127,7 @@ export const ServerMapCore = ({
     });
 
     const edges = linkDataArray.map((link) => ({
-      id: link.key,
+      id: link.serviceKey,
       source: link.from,
       target: link.to,
       transactionInfo: {
@@ -228,15 +228,15 @@ export const ServerMapCore = ({
   };
 
   const handleClickSearchListItem = (item: GetServerMap.NodeData | FilteredMap.NodeData) => {
-    const { key } = item;
-    let clickedNode = cyRef.current?.getElementById(key);
+    const { serviceKey } = item;
+    let clickedNode = cyRef.current?.getElementById(serviceKey);
 
     if (clickedNode?.empty()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       clickedNode = cyRef.current?.nodes().filter((node: any) => {
         const { nodes } = node.data();
 
-        return Boolean(nodes) && nodes.some(({ id }: Node) => id === key);
+        return Boolean(nodes) && nodes.some(({ id }: Node) => id === serviceKey);
       });
     }
 

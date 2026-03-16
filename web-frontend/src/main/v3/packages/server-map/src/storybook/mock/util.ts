@@ -27,7 +27,7 @@ export const getServerMapData = (data: {
   const { nodeDataArray = [], linkDataArray = [] } = data?.applicationMapData!;
   const nodes = nodeDataArray.map((node: any) => {
     return {
-      id: node.key,
+      id: node.serviceKey,
       label: node.applicationName,
       type: node.serviceType,
       imgPath: `/assets/img/servers/${node.serviceType}.png`,
@@ -36,7 +36,7 @@ export const getServerMapData = (data: {
   });
 
   const edges = linkDataArray.map((link: any, i: number) => ({
-    id: link.key,
+    id: link.serviceKey,
     source: link.from,
     target: link.to,
     transactionInfo: {

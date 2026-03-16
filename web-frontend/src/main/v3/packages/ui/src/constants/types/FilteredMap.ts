@@ -110,7 +110,7 @@ export namespace FilteredMapType {
   }
 
   export interface LinkData {
-    key: string;
+    serviceKey: string;
     from: string;
     to: string;
     fromAgents?: Agent[];
@@ -206,7 +206,7 @@ export namespace FilteredMapType {
   }
 
   export interface NodeData {
-    key: string;
+    serviceKey: string;
     applicationName: string;
     serviceType: string;
     serviceTypeCode: number;

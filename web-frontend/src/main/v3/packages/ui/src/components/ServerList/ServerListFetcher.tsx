@@ -56,7 +56,7 @@ export const ServerListFetcher = ({ nodeStatistics }: ServerListFetcherProps) =>
     if (data) {
       setCurrentServer(data?.[0]);
     }
-  }, [currentTargetData?.key]); // currentTarget이 바뀌어서 agent 목록이 바뀐 경우에만 동작
+  }, [currentTargetData?.serviceKey]); // currentTarget이 바뀌어서 agent 목록이 바뀐 경우에만 동작
 
   const handleClickItem: ServerListProps['onClick'] = (instance) => {
     setCurrentServer(instance);

@@ -13,7 +13,7 @@ export const serverMapData: GetServerMap.Response = {
     ],
     linkDataArray: [
       {
-        key: 'app1_SPRING_BOOT^USER~app1^SPRING_BOOT',
+        serviceKey: 'app1_SPRING_BOOT^USER~app1^SPRING_BOOT',
         from: 'app1_SPRING_BOOT^USER',
         to: 'app1^SPRING_BOOT',
         toAgents: [
@@ -96,7 +96,7 @@ export const serverMapData: GetServerMap.Response = {
         hasAlert: false,
       },
       {
-        key: 'app1^SPRING_BOOT~acl^MYSQL',
+        serviceKey: 'app1^SPRING_BOOT~acl^MYSQL',
         from: 'app1^SPRING_BOOT',
         to: 'acl^MYSQL',
         fromAgents: [
@@ -179,7 +179,7 @@ export const serverMapData: GetServerMap.Response = {
         hasAlert: false,
       },
       {
-        key: 'app1^SPRING_BOOT~app2^REDIS',
+        serviceKey: 'app1^SPRING_BOOT~app2^REDIS',
         from: 'app1^SPRING_BOOT',
         to: 'app2^REDIS',
         fromAgents: [
@@ -264,7 +264,7 @@ export const serverMapData: GetServerMap.Response = {
     ],
     nodeDataArray: [
       {
-        key: 'app2^REDIS',
+        serviceKey: 'app2^REDIS',
         applicationName: 'app2',
         category: 'REDIS',
         serviceType: 'REDIS',
@@ -343,7 +343,7 @@ export const serverMapData: GetServerMap.Response = {
         ],
       },
       {
-        key: 'acl^MYSQL',
+        serviceKey: 'acl^MYSQL',
         applicationName: 'acl',
         category: 'MYSQL',
         serviceType: 'MYSQL',
@@ -422,7 +422,7 @@ export const serverMapData: GetServerMap.Response = {
         ],
       },
       {
-        key: 'app1_SPRING_BOOT^USER',
+        serviceKey: 'app1_SPRING_BOOT^USER',
         applicationName: 'USER',
         category: 'USER',
         serviceType: 'USER',
@@ -496,7 +496,7 @@ export const serverMapData: GetServerMap.Response = {
         agents: [],
       },
       {
-        key: 'app1^SPRING_BOOT',
+        serviceKey: 'app1^SPRING_BOOT',
         applicationName: 'app1',
         category: 'SPRING_BOOT',
         serviceType: 'SPRING_BOOT',
@@ -579,7 +579,7 @@ export const serverMapData: GetServerMap.Response = {
 };
 
 export const resultData = {
-  key: 'app1^SPRING_BOOT',
+  serviceKey: 'app1^SPRING_BOOT',
   applicationName: 'app1',
   category: 'SPRING_BOOT',
   serviceType: 'SPRING_BOOT',

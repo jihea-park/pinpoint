@@ -87,7 +87,9 @@ export const FilteredMapPage = ({
           return {
             ...prevFilter,
             agents: (serverMapData?.applicationMapData.nodeDataArray as FilteredMap.NodeData[])
-              ?.find((n) => n.key === `${prevFilter.applicationName}^${prevFilter.serviceType}`)
+              ?.find(
+                (n) => n.serviceKey === `${prevFilter.applicationName}^${prevFilter.serviceType}`,
+              )
               ?.agents?.map((agent) => agent.id),
           };
         } else if (
@@ -100,7 +102,7 @@ export const FilteredMapPage = ({
             serverMapData?.applicationMapData.linkDataArray as FilteredMap.LinkData[]
           )?.find(
             (n) =>
-              n.key ===
+              n.serviceKey ===
               `${prevFilter.fromApplication}^${prevFilter.fromServiceType}~${prevFilter.toApplication}^${prevFilter.toServiceType}`,
           );
 
@@ -123,10 +125,10 @@ export const FilteredMapPage = ({
       const isTargetIncluded =
         serverMapCurrentTarget &&
         ((serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]).some(
-          ({ key }) => key === serverMapCurrentTarget.id,
+          ({ serviceKey }) => serviceKey === serverMapCurrentTarget.id,
         ) ||
           (serverMapData.applicationMapData.linkDataArray as GetServerMap.LinkData[]).some(
-            ({ key }) => key === serverMapCurrentTarget.id,
+            ({ serviceKey }) => serviceKey === serverMapCurrentTarget.id,
           ));
 
       if (isTargetIncluded || serverMapCurrentTarget?.nodes || serverMapCurrentTarget?.edges) {
@@ -137,7 +139,7 @@ export const FilteredMapPage = ({
           serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]
         ).find((node) => {
           return (
-            getApplicationKey(application!) === node.key ||
+            getApplicationKey(application!) === node.serviceKey ||
             (node.applicationName === application?.applicationName &&
               node.serviceType === 'UNAUTHORIZED')
           );

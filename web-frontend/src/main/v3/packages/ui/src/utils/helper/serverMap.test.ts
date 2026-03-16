@@ -42,8 +42,8 @@ describe('Test serverMap helper utils', () => {
         },
         timestamp: [],
         nodeDataArray: [
-          { key: 'test-app^TOMCAT' } as GetServerMap.NodeData,
-          { key: 'other-app^JETTY' } as GetServerMap.NodeData,
+          { serviceKey: 'test-app^TOMCAT' } as GetServerMap.NodeData,
+          { serviceKey: 'other-app^JETTY' } as GetServerMap.NodeData,
         ],
         linkDataArray: [],
       };
@@ -65,7 +65,7 @@ describe('Test serverMap helper utils', () => {
           toDateTime: '',
         },
         timestamp: [],
-        nodeDataArray: [{ key: 'other-app^JETTY' } as GetServerMap.NodeData],
+        nodeDataArray: [{ serviceKey: 'other-app^JETTY' } as GetServerMap.NodeData],
         linkDataArray: [],
       };
 
@@ -114,7 +114,7 @@ describe('Test serverMap helper utils', () => {
           toDateTime: '',
         },
         timestamp: [],
-        nodeDataArray: [{ key: 'test-app^TOMCAT' } as FilteredMap.NodeData],
+        nodeDataArray: [{ serviceKey: 'test-app^TOMCAT' } as FilteredMap.NodeData],
         linkDataArray: [],
       };
 
@@ -136,7 +136,7 @@ describe('Test serverMap helper utils', () => {
         },
         timestamp: [],
         nodeDataArray: [
-          { key: 'test-app^TOMCAT' } as GetServerMap.NodeData, // uppercase
+          { serviceKey: 'test-app^TOMCAT' } as GetServerMap.NodeData, // uppercase
         ],
         linkDataArray: [],
       };

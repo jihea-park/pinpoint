@@ -81,10 +81,10 @@ export const ServerMapPage = ({
       const isTargetIncluded =
         serverMapCurrentTarget &&
         ((serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]).some(
-          ({ key }) => key === serverMapCurrentTarget.id,
+          ({ serviceKey }) => serviceKey === serverMapCurrentTarget.id,
         ) ||
           (serverMapData.applicationMapData.linkDataArray as GetServerMap.LinkData[]).some(
-            ({ key }) => key === serverMapCurrentTarget.id,
+            ({ serviceKey }) => serviceKey === serverMapCurrentTarget.id,
           ));
 
       if (isTargetIncluded || serverMapCurrentTarget?.nodes || serverMapCurrentTarget?.edges) {
@@ -95,7 +95,7 @@ export const ServerMapPage = ({
           serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]
         ).find((node) => {
           return (
-            getApplicationKey(application!) === node.key ||
+            getApplicationKey(application!) === node.serviceKey ||
             (node.applicationName === application?.applicationName &&
               node.serviceType === 'UNAUTHORIZED')
           );

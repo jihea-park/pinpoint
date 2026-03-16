@@ -29,7 +29,7 @@ export function useFilterWizardOnClickApply<
     if (!filterState?.applicationName) {
       const link = (serverMapData?.applicationMapData?.linkDataArray as T[])?.find(
         (l) =>
-          l?.key ===
+          l?.serviceKey ===
           `${filterState?.fromApplication}^${filterState?.fromServiceType}~${filterState?.toApplication}^${filterState?.toServiceType}`,
       );
       if (link) {

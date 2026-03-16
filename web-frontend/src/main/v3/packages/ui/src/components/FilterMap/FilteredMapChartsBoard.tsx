@@ -104,14 +104,14 @@ export const FilteredMapChartsBoard = ({
         : [];
 
     return (serverMapData.applicationMapData.nodeDataArray as FilteredMap.NodeData[])
-      .filter(({ key }: FilteredMap.NodeData) => nodeIds.includes(key))
+      .filter(({ serviceKey }: FilteredMap.NodeData) => nodeIds.includes(serviceKey))
       .sort((node1, node2) => node2.totalCount - node1.totalCount);
   };
 
   const handleClickMergedItem: MergedServerSearchListProps['onClickItem'] = (nodeData) => {
-    const { key, applicationName, serviceType } = nodeData;
+    const { serviceKey, applicationName, serviceType } = nodeData;
     setServerMapCurrentTarget({
-      id: key,
+      id: serviceKey,
       applicationName,
       serviceType,
       imgPath: getServerImagePath(nodeData),

@@ -37,7 +37,7 @@ export namespace GetServerMap {
   }
 
   export interface LinkData {
-    key: string;
+    serviceKey: string;
     linkKey?: string;
     from: string;
     to: string;
@@ -109,7 +109,8 @@ export namespace GetServerMap {
   }
 
   export interface NodeData {
-    key: string;
+    // key: string;
+    serviceKey: string;
     nodeKey?: string;
     applicationName: string;
     serviceType: string;
