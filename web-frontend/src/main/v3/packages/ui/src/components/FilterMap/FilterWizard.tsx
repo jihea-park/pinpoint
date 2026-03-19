@@ -19,7 +19,7 @@ import { PiDotOutlineLight } from 'react-icons/pi';
 import { GoDot } from 'react-icons/go';
 import { FilterStatus } from './FilterStatus';
 import { FilteredMapType as FilteredMap } from '@pinpoint-fe/ui/src/constants';
-import { addCommas, getApplicationTypeAndName } from '@pinpoint-fe/ui/src/utils';
+import { addCommas, parseServiceKey, getDisplayApplicationName } from '@pinpoint-fe/ui/src/utils';
 import { Edge, Node } from '@pinpoint-fe/ui/src/utils/helper/serverMap';
 import { PopoverArrow } from '@radix-ui/react-popover';
 
@@ -56,14 +56,16 @@ export const getDefaultFilters = (
 ) => {
   if ('source' in data) {
     const edgeData = data as Edge;
-    // edge
-    const from = getApplicationTypeAndName(edgeData.source);
-    const to = getApplicationTypeAndName(edgeData.target);
+    // edge — source/target are keys: serviceName^applicationName^serviceType
+    const from = parseServiceKey(edgeData.source);
+    const to = parseServiceKey(edgeData.target);
     return {
-      fromApplication: from?.applicationName,
-      fromServiceType: from?.serviceType,
-      toApplication: to?.applicationName,
-      toServiceType: to?.serviceType,
+      fromApplication: getDisplayApplicationName(from.applicationName),
+      fromServiceType: from.serviceType,
+      fromServiceName: from.serviceName,
+      toApplication: getDisplayApplicationName(to.applicationName),
+      toServiceType: to.serviceType,
+      toServiceName: to.serviceName,
       transactionResult: null,
       applicationName: '',
       serviceType: '',
@@ -79,17 +81,18 @@ export const getDefaultFilters = (
       hint,
     };
   } else if ('type' in data) {
-    // node
+    // node — id is key: serviceName^applicationName^serviceType
     const nodeData = data as Node;
-    const app = getApplicationTypeAndName(nodeData.id);
+    const { serviceName, applicationName, serviceType } = parseServiceKey(nodeData.id);
     return {
       fromApplication: '',
       fromServiceType: '',
       toApplication: '',
       toServiceType: '',
       transactionResult: null,
-      applicationName: app?.applicationName,
-      serviceType: app?.serviceType,
+      applicationName: getDisplayApplicationName(applicationName),
+      serviceType,
+      serviceName,
       agentName: '',
       responseFrom: MIN_RESPONSE_TIME,
       responseTo: 'max',

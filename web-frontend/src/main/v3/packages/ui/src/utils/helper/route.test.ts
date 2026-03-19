@@ -122,7 +122,31 @@ describe('Test route helper utils', () => {
   });
 
   describe('Test "getFilteredMapPath"', () => {
-    test('Return FilterMap path: using toApplication and toServiceType when applicationName is not exist and sourceIsWas is false', () => {
+    test('Return FilterMap path with serviceName prefix when applicationName is present', () => {
+      const filterState = {
+        fromApplication: '',
+        fromServiceType: '',
+        toApplication: '',
+        toServiceType: '',
+        transactionResult: null,
+        applicationName: 'applicationName',
+        serviceType: 'serviceType',
+        serviceName: 'myService',
+        agentName: '',
+        responseFrom: 0,
+        responseTo: 'max',
+        url: '',
+        fromAgentName: '',
+        toAgentName: '',
+        agents: ['agent'],
+      };
+      const sourceIsWas = false;
+
+      const result = getFilteredMapPath(filterState, sourceIsWas);
+      expect(result).toEqual('/filteredMap/myService@applicationName@serviceType');
+    });
+
+    test('Use DEFAULT as serviceName when serviceName is not provided and applicationName is present', () => {
       const filterState = {
         fromApplication: '',
         fromServiceType: '',
@@ -142,13 +166,14 @@ describe('Test route helper utils', () => {
       const sourceIsWas = false;
 
       const result = getFilteredMapPath(filterState, sourceIsWas);
-      expect(result).toEqual('/filteredMap/applicationName@serviceType');
+      expect(result).toEqual('/filteredMap/DEFAULT@applicationName@serviceType');
     });
 
     test('Return FilterMap path: using fromApplication and fromServiceType when applicationName is not exist and sourceIsWas is true', () => {
       const filterState = {
         fromApplication: 'fromApplication',
         fromServiceType: 'fromServiceType',
+        fromServiceName: 'fromService',
         toApplication: 'toApplication',
         toServiceType: 'toServiceType',
         transactionResult: null,
@@ -165,7 +190,7 @@ describe('Test route helper utils', () => {
       const sourceIsWas = true;
 
       const result = getFilteredMapPath(filterState, sourceIsWas);
-      expect(result).toEqual('/filteredMap/fromApplication@fromServiceType');
+      expect(result).toEqual('/filteredMap/fromService@fromApplication@fromServiceType');
     });
 
     test('Return FilterMap path: using toApplication and toServiceType when applicationName is not exist and sourceIsWas is false', () => {
@@ -174,6 +199,7 @@ describe('Test route helper utils', () => {
         fromServiceType: 'fromServiceType',
         toApplication: 'toApplication',
         toServiceType: 'toServiceType',
+        toServiceName: 'toService',
         transactionResult: null,
         applicationName: '',
         serviceType: '',
@@ -188,7 +214,7 @@ describe('Test route helper utils', () => {
       const sourceIsWas = false;
 
       const result = getFilteredMapPath(filterState, sourceIsWas);
-      expect(result).toEqual('/filteredMap/toApplication@toServiceType');
+      expect(result).toEqual('/filteredMap/toService@toApplication@toServiceType');
     });
   });
 });

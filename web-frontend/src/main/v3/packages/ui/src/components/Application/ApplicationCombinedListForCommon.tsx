@@ -24,6 +24,7 @@ export interface ApplicationCombinedListForCommonProps {
   addFavoriteMessage?: string;
   removeFavoriteMessage?: string;
   onClickApplication?: (application: ApplicationType) => void;
+  formatApplicationName?: (application: ApplicationType) => string;
 }
 
 export const ApplicationCombinedListForCommon = ({
@@ -36,6 +37,7 @@ export const ApplicationCombinedListForCommon = ({
   disabled,
   selectedApplication,
   onClickApplication,
+  formatApplicationName,
 }: ApplicationCombinedListForCommonProps) => {
   const [isOpen, setIsOpen] = React.useState(open);
   const popoverContentRef = React.useRef<HTMLDivElement>(null);
@@ -248,7 +250,11 @@ export const ApplicationCombinedListForCommon = ({
           {selectedApplication ? (
             <div className="flex items-center flex-1 gap-2 overflow-hidden group/applist-input">
               <ServerIcon className="w-6" application={selectedApplication} />
-              <div className="truncate">{selectedApplication.applicationName}</div>
+              <div className="truncate">
+                {formatApplicationName
+                  ? formatApplicationName(selectedApplication)
+                  : selectedApplication.applicationName}
+              </div>
               <div
                 className="flex-none hidden w-5 h-5 ml-auto cursor-pointer group-hover/applist-input:block"
                 onClick={(e) => handleClickFavorite(e, selectedApplication, { disableToast: true })}

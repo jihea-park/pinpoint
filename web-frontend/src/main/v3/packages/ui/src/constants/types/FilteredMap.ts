@@ -10,14 +10,17 @@ export namespace FilteredMapType {
   export interface FilterState {
     fromApplication?: SearchParameters['fa']; // from applicationName
     fromServiceType?: SearchParameters['fst']; // from serviceType
+    fromServiceName?: string; // from serviceName
     fromAgents?: string[];
     toApplication?: SearchParameters['ta']; // to applicationName
     toServiceType?: SearchParameters['tst']; // to serviceType
+    toServiceName?: string; // to serviceName
     toAgents?: string[];
     transactionResult: SearchParameters['ie']; // include exception (X)
     // if single node
     applicationName?: SearchParameters['a']; //  applicationName
     serviceType?: SearchParameters['st']; // serviceType
+    serviceName?: string; // serviceName
     agentName?: SearchParameters['an']; // agentName
     agents?: string[];
     // settings by user
@@ -207,6 +210,7 @@ export namespace FilteredMapType {
 
   export interface NodeData {
     key: string;
+    serviceName?: string;
     applicationName: string;
     serviceType: string;
     serviceTypeCode: number;

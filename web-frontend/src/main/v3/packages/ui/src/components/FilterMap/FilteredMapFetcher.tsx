@@ -12,6 +12,8 @@ import {
   mergeFilteredMapLinkData,
   getServerImagePath,
   getBaseNodeId,
+  parseServiceKey,
+  getDisplayApplicationName,
 } from '@pinpoint-fe/ui/src/utils';
 import { MergedNode, MergedEdge, Node, Edge } from '@pinpoint-fe/server-map';
 import { useFilteredMapParameters, useGetFilteredServerMapData } from '@pinpoint-fe/ui/src/hooks';
@@ -155,10 +157,13 @@ export const FilteredMapFetcher = ({
   };
 
   const handleMergeStateChange = () => {
-    const [applicationName, serviceType] = getBaseNodeId({
-      application,
-      applicationMapData: data?.applicationMapData,
-    }).split('^');
+    const { applicationName: parsedAppName, serviceType } = parseServiceKey(
+      getBaseNodeId({
+        application,
+        applicationMapData: data?.applicationMapData,
+      }),
+    );
+    const applicationName = getDisplayApplicationName(parsedAppName);
 
     setServerMapCurrentTarget({
       applicationName,

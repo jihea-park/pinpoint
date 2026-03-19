@@ -12,7 +12,12 @@ import {
   useServerMapSearchParameters,
 } from '@pinpoint-fe/ui/src/hooks';
 import { useTranslation } from 'react-i18next';
-import { getBaseNodeId, getServerImagePath } from '@pinpoint-fe/ui/src/utils';
+import {
+  getBaseNodeId,
+  getServerImagePath,
+  parseServiceKey,
+  getDisplayApplicationName,
+} from '@pinpoint-fe/ui/src/utils';
 import { ServerMapCore, ServerMapCoreProps } from './ServerMapCore';
 
 export interface ServerMapFetcherProps extends Pick<
@@ -71,10 +76,13 @@ export const ServerMapFetcher = ({ shouldPoll, ...props }: ServerMapFetcherProps
 
   const handleMergeStateChange = () => {
     if (data) {
-      const [applicationName, serviceType] = getBaseNodeId({
-        application,
-        applicationMapData: data?.applicationMapData,
-      }).split('^');
+      const { applicationName: parsedAppName, serviceType } = parseServiceKey(
+        getBaseNodeId({
+          application,
+          applicationMapData: data?.applicationMapData,
+        }),
+      );
+      const applicationName = getDisplayApplicationName(parsedAppName);
 
       setServerMapCurrentTarget({
         applicationName,

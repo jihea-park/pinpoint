@@ -4,6 +4,7 @@ import {
   GetServerMap,
 } from '@pinpoint-fe/ui/src/constants';
 import { Edge as ServerMapEdge, Node as ServerMapNode } from '@pinpoint-fe/server-map';
+import { getApplicationKey } from './application';
 
 export type Edge = ServerMapEdge;
 export type Node = ServerMapNode;
@@ -17,11 +18,28 @@ export const getBaseNodeId = ({
 }) => {
   if (application && applicationMapData) {
     const nodeList = applicationMapData.nodeDataArray;
-    const baseNodeId = `${application?.applicationName}^${application?.serviceType}`;
 
-    return nodeList.length === 0 || nodeList.some(({ key }: { key: string }) => key === baseNodeId)
-      ? baseNodeId
-      : baseNodeId.replace(/(.*)\^(.*)/i, '$1^UNAUTHORIZED');
+    if (nodeList.length === 0) {
+      return getApplicationKey(application);
+    }
+
+    const matchedNode = nodeList.find(
+      (node) =>
+        node.applicationName === application.applicationName &&
+        node.serviceType === application.serviceType,
+    );
+
+    if (matchedNode) {
+      return matchedNode.key;
+    }
+
+    const unauthorizedNode = nodeList.find(
+      (node) =>
+        node.applicationName === application.applicationName &&
+        node.serviceType === 'UNAUTHORIZED',
+    );
+
+    return unauthorizedNode?.key ?? getApplicationKey(application);
   }
   return '';
 };

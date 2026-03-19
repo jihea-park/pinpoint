@@ -5,7 +5,6 @@ import {
   convertParamsToQueryString,
   getServerImagePath,
   getFilteredMapPath,
-  getApplicationKey,
   getServerMapPath,
 } from '@pinpoint-fe/ui/src/utils';
 import { useFilteredMapParameters } from '@pinpoint-fe/ui/src/hooks';
@@ -87,7 +86,11 @@ export const FilteredMapPage = ({
           return {
             ...prevFilter,
             agents: (serverMapData?.applicationMapData.nodeDataArray as FilteredMap.NodeData[])
-              ?.find((n) => n.key === `${prevFilter.applicationName}^${prevFilter.serviceType}`)
+              ?.find(
+                (n) =>
+                  n.applicationName === prevFilter.applicationName &&
+                  n.serviceType === prevFilter.serviceType,
+              )
               ?.agents?.map((agent) => agent.id),
           };
         } else if (
@@ -100,8 +103,10 @@ export const FilteredMapPage = ({
             serverMapData?.applicationMapData.linkDataArray as FilteredMap.LinkData[]
           )?.find(
             (n) =>
-              n.key ===
-              `${prevFilter.fromApplication}^${prevFilter.fromServiceType}~${prevFilter.toApplication}^${prevFilter.toServiceType}`,
+              n.sourceInfo.applicationName === prevFilter.fromApplication &&
+              n.sourceInfo.serviceType === prevFilter.fromServiceType &&
+              n.targetInfo.applicationName === prevFilter.toApplication &&
+              n.targetInfo.serviceType === prevFilter.toServiceType,
           );
 
           return {
@@ -137,7 +142,8 @@ export const FilteredMapPage = ({
           serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]
         ).find((node) => {
           return (
-            getApplicationKey(application!) === node.key ||
+            (node.applicationName === application?.applicationName &&
+              node.serviceType === application?.serviceType) ||
             (node.applicationName === application?.applicationName &&
               node.serviceType === 'UNAUTHORIZED')
           );
@@ -213,7 +219,11 @@ export const FilteredMapPage = ({
           </div>
         }
       >
-        <ApplicationList selectedApplication={application} disabled />
+        <ApplicationList
+          selectedApplication={application}
+          disabled
+          formatApplicationName={(app) => `${app.serviceName ?? 'DEFAULT'}^${app.applicationName}`}
+        />
         <div className="ml-auto">
           {application && (
             <DatetimePicker
