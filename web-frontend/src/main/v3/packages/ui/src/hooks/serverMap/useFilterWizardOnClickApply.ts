@@ -29,8 +29,10 @@ export function useFilterWizardOnClickApply<
     if (!filterState?.applicationName) {
       const link = (serverMapData?.applicationMapData?.linkDataArray as T[])?.find(
         (l) =>
-          l?.key ===
-          `${filterState?.fromApplication}^${filterState?.fromServiceType}~${filterState?.toApplication}^${filterState?.toServiceType}`,
+          l?.sourceInfo?.applicationName === filterState?.fromApplication &&
+          l?.sourceInfo?.serviceType === filterState?.fromServiceType &&
+          l?.targetInfo?.applicationName === filterState?.toApplication &&
+          l?.targetInfo?.serviceType === filterState?.toServiceType,
       );
       if (link) {
         soureIsWas = link?.sourceInfo?.nodeCategory === GetServerMap.NodeCategory.SERVER;

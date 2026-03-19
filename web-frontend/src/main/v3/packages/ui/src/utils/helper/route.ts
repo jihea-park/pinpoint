@@ -83,12 +83,15 @@ export const getHeatmapFullScreenRealtimePath = getApplicationPath(
 export const getFilteredMapPath = (filterState: FilteredMap.FilterState, soureIsWas?: boolean) => {
   let applicationNameAndType = '';
   if (filterState?.applicationName) {
-    applicationNameAndType = `${filterState?.applicationName}@${filterState.serviceType}`;
+    const serviceName = filterState?.serviceName ?? 'DEFAULT';
+    applicationNameAndType = `${serviceName}@${filterState?.applicationName}@${filterState.serviceType}`;
   } else {
     if (soureIsWas) {
-      applicationNameAndType = `${filterState?.fromApplication}@${filterState.fromServiceType}`;
+      const serviceName = filterState?.fromServiceName ?? 'DEFAULT';
+      applicationNameAndType = `${serviceName}@${filterState?.fromApplication}@${filterState.fromServiceType}`;
     } else {
-      applicationNameAndType = `${filterState?.toApplication}@${filterState.toServiceType}`;
+      const serviceName = filterState?.toServiceName ?? 'DEFAULT';
+      applicationNameAndType = `${serviceName}@${filterState?.toApplication}@${filterState.toServiceType}`;
     }
   }
   return `${APP_PATH.FILTERED_MAP}/${applicationNameAndType}`;

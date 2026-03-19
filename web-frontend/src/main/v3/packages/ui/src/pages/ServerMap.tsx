@@ -6,7 +6,6 @@ import {
   getServerMapPath,
   convertParamsToQueryString,
   getServerImagePath,
-  getApplicationKey,
   getFormattedDateRange,
   getRealtimePath,
 } from '@pinpoint-fe/ui/src/utils';
@@ -95,7 +94,8 @@ export const ServerMapPage = ({
           serverMapData.applicationMapData.nodeDataArray as GetServerMap.NodeData[]
         ).find((node) => {
           return (
-            getApplicationKey(application!) === node.key ||
+            (node.applicationName === application?.applicationName &&
+              node.serviceType === application?.serviceType) ||
             (node.applicationName === application?.applicationName &&
               node.serviceType === 'UNAUTHORIZED')
           );

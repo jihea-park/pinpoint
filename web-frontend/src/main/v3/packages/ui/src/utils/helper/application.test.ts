@@ -1,4 +1,9 @@
-import { getApplicationTypeAndName, getApplicationKey } from './application';
+import {
+  getApplicationTypeAndName,
+  getApplicationKey,
+  parseServiceKey,
+  getDisplayApplicationName,
+} from './application';
 import { ApplicationType } from '@pinpoint-fe/ui/src/constants';
 
 describe('Test application helper utils', () => {
@@ -59,35 +64,86 @@ describe('Test application helper utils', () => {
   });
 
   describe('Test "getApplicationKey"', () => {
-    test('Return application key from application object', () => {
+    test('Return key format (serviceName^applicationName^serviceType)', () => {
+      const application: ApplicationType = {
+        applicationName: 'appName',
+        serviceType: 'serviceType',
+        serviceName: 'myService',
+      };
+      const result = getApplicationKey(application);
+      expect(result).toBe('myService^appName^serviceType');
+    });
+
+    test('Return key with empty serviceName when serviceName is not provided', () => {
       const application: ApplicationType = {
         applicationName: 'appName',
         serviceType: 'serviceType',
       };
       const result = getApplicationKey(application);
-      expect(result).toBe('appName^serviceType');
+      expect(result).toBe('^appName^serviceType');
     });
 
-    test('Return application key with empty strings when application is undefined', () => {
-      const result = getApplicationKey(undefined);
-      expect(result).toBe('undefined^undefined');
-    });
-
-    test('Return application key with partial data', () => {
-      const application: Partial<ApplicationType> = {
-        applicationName: 'appName',
+    test('Escape ^ in applicationName', () => {
+      const application: ApplicationType = {
+        applicationName: 'app^name',
+        serviceType: 'serviceType',
+        serviceName: 'myService',
       };
-      const result = getApplicationKey(application as ApplicationType);
-      expect(result).toBe('appName^undefined');
+      const result = getApplicationKey(application);
+      expect(result).toBe('myService^app\\^name^serviceType');
     });
 
     test('Handle application with special characters', () => {
       const application: ApplicationType = {
         applicationName: 'app-name',
         serviceType: 'service_type',
+        serviceName: 'myService',
       };
       const result = getApplicationKey(application);
-      expect(result).toBe('app-name^service_type');
+      expect(result).toBe('myService^app-name^service_type');
+    });
+  });
+
+  describe('Test "parseServiceKey"', () => {
+    test('Parse basic serviceKey', () => {
+      const result = parseServiceKey('myService^myApp^myType');
+      expect(result).toEqual({
+        serviceName: 'myService',
+        applicationName: 'myApp',
+        serviceType: 'myType',
+      });
+    });
+
+    test('Parse serviceKey with escaped ^ in applicationName', () => {
+      const result = parseServiceKey('myService^myAppli\\^cation^myType');
+      expect(result).toEqual({
+        serviceName: 'myService',
+        applicationName: 'myAppli\\^cation',
+        serviceType: 'myType',
+      });
+    });
+
+    test('Parse serviceKey with empty serviceName', () => {
+      const result = parseServiceKey('^myApp^myType');
+      expect(result).toEqual({
+        serviceName: '',
+        applicationName: 'myApp',
+        serviceType: 'myType',
+      });
+    });
+  });
+
+  describe('Test "getDisplayApplicationName"', () => {
+    test('Replace escaped ^ with ^ for display', () => {
+      expect(getDisplayApplicationName('myAppli\\^cation')).toBe('myAppli^cation');
+    });
+
+    test('Leave applicationName unchanged when no escaped ^', () => {
+      expect(getDisplayApplicationName('myApp')).toBe('myApp');
+    });
+
+    test('Replace multiple escaped ^ ', () => {
+      expect(getDisplayApplicationName('a\\^b\\^c')).toBe('a^b^c');
     });
   });
 });
