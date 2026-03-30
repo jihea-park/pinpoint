@@ -52,12 +52,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -73,12 +78,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -93,18 +103,23 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'spline',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
-          },
-          {
-            chartType: 'bar',
-            fieldName: 'field2',
-            unit: 'percent',
-            valueList: [40, 50, 60],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'spline',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+              {
+                chartType: 'bar',
+                fieldName: 'field2',
+                unit: 'percent',
+                valueList: [40, 50, 60],
+              },
+            ],
           },
         ],
       };
@@ -122,18 +137,23 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'unit1',
-            valueList: [10, 20, 30],
-          },
-          {
-            chartType: 'line',
-            fieldName: 'field2',
-            unit: 'unit2',
-            valueList: [40, 50, 60],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'unit1',
+                valueList: [10, 20, 30],
+              },
+              {
+                chartType: 'line',
+                fieldName: 'field2',
+                unit: 'unit2',
+                valueList: [40, 50, 60],
+              },
+            ],
           },
         ],
       };
@@ -156,12 +176,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'unit1',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'unit1',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -182,18 +207,23 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'fastCount',
-            unit: 'count',
-            valueList: [10, 20, 30],
-          },
-          {
-            chartType: 'line',
-            fieldName: 'normalCount',
-            unit: 'count',
-            valueList: [40, 50, 60],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'fastCount',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+              {
+                chartType: 'line',
+                fieldName: 'normalCount',
+                unit: 'count',
+                valueList: [40, 50, 60],
+              },
+            ],
           },
         ],
       };
@@ -211,12 +241,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Apdex Score',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -230,12 +265,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Other Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -249,12 +289,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };
@@ -283,12 +328,17 @@ describe('useChartConfig', () => {
       const data: InspectorAgentChart.Response = {
         title: 'Test Chart',
         timestamp: [1000, 2000, 3000],
-        metricValues: [
+        metricValueGroups: [
           {
-            chartType: 'line',
-            fieldName: 'field1',
-            unit: 'count',
-            valueList: [10, 20, 30],
+            tags: [],
+            metricValues: [
+              {
+                chartType: 'line',
+                fieldName: 'field1',
+                unit: 'count',
+                valueList: [10, 20, 30],
+              },
+            ],
           },
         ],
       };

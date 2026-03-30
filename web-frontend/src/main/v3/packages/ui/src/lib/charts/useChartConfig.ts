@@ -23,7 +23,12 @@ export const useChartConfig = (
     elseOptions?: ChartOptions;
   },
 ) => {
-  const { chartMetricData, chartTooltipData, dataKeys } = useChartParseData(data?.metricValues);
+  const metricValues = data
+    ? 'metricValueGroups' in data
+      ? data.metricValueGroups.flatMap((g) => g.metricValues)
+      : data.metricValues
+    : undefined;
+  const { chartMetricData, chartTooltipData, dataKeys } = useChartParseData(metricValues);
   const { chartUnitAxisInfo, getDataAxis } = useChartAxis();
   const { getTooltipData, getTooltipStr } = useChartTooltip(chartTooltipData);
   const { getChartType } = useChartType();

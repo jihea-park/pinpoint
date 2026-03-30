@@ -87,10 +87,14 @@ export const ChartCore = ({
 
   React.useEffect(() => {
     const chart = chartComponent.current?.instance;
+    const metricValues =
+      data && 'metricValueGroups' in data
+        ? data.metricValueGroups.flatMap((g) => g.metricValues)
+        : (data?.metricValues ?? []);
     const chartData = data
       ? [
           ['dates', ...data.timestamp],
-          ...data.metricValues.map(({ fieldName, valueList }) => {
+          ...metricValues.map(({ fieldName, valueList }) => {
             return [fieldName, ...valueList.map((v) => (v < 0 ? null : v))];
           }),
         ]

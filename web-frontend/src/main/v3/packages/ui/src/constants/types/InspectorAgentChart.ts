@@ -9,7 +9,16 @@ export namespace InspectorAgentChart {
   export interface Response {
     title: string;
     timestamp: number[];
+    metricValueGroups: MetricValueGroup[];
+  }
+  export interface MetricValueGroup {
+    tags: Tag[];
     metricValues: MetricValue[];
+  }
+
+  export interface Tag {
+    name: string;
+    value: string;
   }
 
   export interface MetricValue {
@@ -17,6 +26,5 @@ export namespace InspectorAgentChart {
     fieldName: string;
     unit: string;
     valueList: number[];
-    tagList?: unknown[];
   }
 }
