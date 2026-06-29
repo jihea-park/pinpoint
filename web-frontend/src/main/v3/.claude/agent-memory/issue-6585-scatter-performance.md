@@ -45,10 +45,32 @@ light mode(v1.6.0)는 OSS scatter-chart(v1.5.1)에 미포팅.
 
 이슈 본문 측정 환경과 동일 기준으로 v2 대비/개선 전후 비교. **3회 평균**.
 
-### 대상 URL (이슈에 기록된 대량 케이스)
-- 120만건: `serverMap/APIGW-DEV@VERTX?from=...&to=...` (1시간 범위)
-- 350만건: `serverMap/APIGW-DEV@VERTX?from=...&to=...` (3시간 범위)
-- ※ 현재 유효한 대량 트래픽 application으로 from/to 갱신 필요.
+### 대상 application/시간대 (확정 — 2026-06-29 localhost:8080 백엔드 실측)
+
+**application: `APIGW-DEV-PGD1` (VERTX)** — 현재 유효한 고트래픽 게이트웨이.
+실측으로 윈도우별 총 dot 수를 페이지네이션 누적해 확인. 이슈의 두 tier를 거의 정확히 재현:
+
+| 윈도우 | 실측 총 건수 | 이슈 대응 tier | from (KST) | to (KST) |
+|---|---|---|---|---|
+| 1시간 | 607,912 | — | 2026-06-29-15-43-20 | 2026-06-29-16-43-20 |
+| **2시간** | **1,198,516** | **이슈 120만건 (1,185,446)** | 2026-06-29-14-43-20 | 2026-06-29-16-43-20 |
+| 3시간 | 1,780,058 | 중간 | 2026-06-29-13-43-20 | 2026-06-29-16-43-20 |
+| **6시간** | **3,585,814** | **이슈 350만건 (3,577,207)** | 2026-06-29-10-43-20 | 2026-06-29-16-43-20 |
+
+측정 URL (dev 서버, base `/`, KST 기준 `yyyy-MM-dd-HH-mm-ss`):
+
+```
+# 120만건 (2h)
+http://localhost:3000/serverMap/APIGW-DEV-PGD1@VERTX?from=2026-06-29-14-43-20&to=2026-06-29-16-43-20&inbound=1&outbound=1&bidirectional=false&wasOnly=false
+
+# 350만건 (6h)
+http://localhost:3000/serverMap/APIGW-DEV-PGD1@VERTX?from=2026-06-29-10-43-20&to=2026-06-29-16-43-20&inbound=1&outbound=1&bidirectional=false&wasOnly=false
+```
+
+- 서버맵 로드 후 `APIGW-DEV-PGD1` 노드를 선택하면 우측 패널 scatter가 렌더됨(측정 대상).
+- ⚠️ HBase TTL로 데이터가 만료되므로 **위 시간대는 곧 무효화됨**. 재측정 시:
+  `scratchpad/count_scatter.py "APIGW-DEV-PGD1" "VERTX" <hours> <end_epoch_ms>`로 새 윈도우의 실건수 재확인 후 KST 시각으로 URL 생성.
+- 프로브 스크립트: `count_scatter.py`(총 건수 누적), `probe_scatter.py`(단일 틱/현재시각 확인).
 
 ### 3-1. 렌더링 성능 (문제 1 재측정 — 이슈 본문 미갱신 항목)
 1. Chrome DevTools → Performance 탭
