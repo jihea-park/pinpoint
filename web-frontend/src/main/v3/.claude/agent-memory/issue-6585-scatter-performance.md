@@ -106,6 +106,23 @@ http://localhost:3000/serverMap/APIGW-DEV-PGD1@VERTX?from=2026-06-29-10-43-20&to
 - 그 외 후보: 오프스크린/배치 드로잉, 다운샘플링, WebGL.
 - ※ 계측 overhead(per-call console.log) 포함이라 절대값은 보수적으로 해석. 배율/비율이 핵심.
 
+#### 개선 적용 + 재측정 결과 (2026-06-30, 브랜치 `feat/6585-incremental-legend-count`)
+render의 O(n²)는 **두 군데**였음 (재측정으로 확인):
+1. `setLegendCount` 매 틱 전량 재reduce → **증분 카운트**로 전환.
+2. `this.data = [...this.data, ...data]` 매 틱 누적 전량 **스프레드 복사** → **제자리 push**로 전환. (이쪽이 지배적 병목)
+   (비-append은 호출자 배열(jotai `acc`) 오염 방지 위해 방어적 복사 `[...data]`. realtime은 슬라이딩 윈도우라 기존 full-reduce 유지.)
+
+같은 ~3.36M 데이터셋 render 누적 (임시 계측, 측정 후 제거):
+
+| 단계 | render 누적 | per-dot | baseline 대비 |
+|---|---|---|---|
+| 개선 전 (baseline) | 15,631 ms (3.59M) | 4.36 μs | — |
+| legend count만 증분화 | 12,447 ms (3.37M) | 3.69 μs | −15% |
+| **+ this.data 제자리 push** | **1,247 ms (3.36M)** | **0.37 μs** | **−91.5% (약 11.7× / 동일셋 10×)** |
+
+→ render가 초선형(O(n²)) → 사실상 선형(0.37μs/dot). **이슈 #1 "렌더 느림" 실질 해결.**
+→ 검증: scatter-chart 테스트에 "append 증분 카운트 == 전량 재계산" 동등성 테스트 추가, 전체 빌드/테스트 PASS.
+
 - 메인스레드 busy 내역: localhost(앱) 2,496.8ms + [unattributed](GC·브라우저) 3,883.6ms.
 - **6h(350만건) 확인 결과 (중요): 사이트·스캐터차트는 정상 렌더됨. 죽는 건 DevTools Performance "녹화" 탭뿐.**
   - 즉 **앱은 3.5M을 버팀 → 이슈 #2(탭이 죽는 메모리 리밋)는 현재 코드에서 3.5M으로 재현 안 됨.**
@@ -128,21 +145,18 @@ http://localhost:3000/serverMap/APIGW-DEV-PGD1@VERTX?from=2026-06-29-10-43-20&to
 - 죽으려면 대략 2.5~3배(≈900만~1000만건) 규모 필요 → 일반 조회 범위 밖.
 - 사이트·스캐터차트는 6h에서 정상 렌더(앞 절 참고). 즉 캐시 off + curr/acc로 이슈 #2가 실사용 규모에서 해소됨.
 
-### 3-3. 판정 (측정 완료)
+### 3-3. 판정 (측정 + 개선 완료)
 - **메모리(이슈 #2): 사실상 해결.** 350만건 peak 1.35GB로 임계(3.5~4GB) 대비 충분한 여유.
   → **light mode 불필요(보류)**. (단, 수천만건 초대량 케이스까지 보장하려면 별도 과제)
-- **렌더(이슈 #1): 상태관리 연산은 해결됨(289ms, 선형). 남은 병목은 render의 초선형(O(n²)) 증가.**
-  → 이슈 원 가설("상태관리 연산이 원인")은 curr/acc로 해소됐고, **남은 실질 개선은
-    `setLegendCount` 전량 재카운트(O(n²)) → 증분 카운트로 전환**. 이게 이슈 #1의 다음 액션.
+- **렌더(이슈 #1): 해결.** render의 O(n²) 두 곳(legend count 전량 재reduce + this.data 스프레드 복사)을 제거
+  → 같은 ~3.36M에서 render 12.4s→1.25s (10×), per-dot 4.36→0.37μs. 사실상 선형.
+  → 개선 커밋: `feat/6585-incremental-legend-count` (origin 푸시됨).
 
 ### 다음에 할 일 (우선순위)
-1. **[권장 다음 작업] render O(n²) 개선**: `scatter-chart/src/ui/ScatterChart.ts`의 `setLegendCount`가
-   매 render() 틱마다 `this.datas[type].reduce(...)`로 누적 전량을 재카운트하는 것을 **증분 카운트**로 변경.
-   - 변경 후 동일 프로토콜(2h/6h 임시 계측)로 render 시간 재측정해 개선폭 확인.
-   - 회귀 주의: 줌/리사이즈/legend 토글 시 카운트 정확성 유지.
-2. 측정 결과(메모리 peak 1.35GB, 연산 289ms vs 렌더 15.6s, render O(n²))를 이슈 #6585 본문 코멘트로 정리.
+1. ✅ **[완료] render O(n²) 개선** — legend count 증분화 + this.data 제자리 push. 동등성 테스트 추가, QA PASS, push 완료.
+2. 개선 브랜치 **PR 생성**(upstream 대상) + 측정 결과(메모리 peak 1.35GB, render 10× 개선)를 이슈 #6585 본문 코멘트로 정리.
 3. light mode·초대량(수천만건) 대응은 **별도 이슈로 분리** 제안.
-4. (1) 개선까지 반영되면 이슈 #6585 **클로징** 검토.
+4. PR 머지 후 이슈 #6585 **클로징** 검토.
 
 ### 임시 계측 코드 (측정 완료 → 제거됨)
 - 측정에 쓴 `TEMP[#6585]` 계측은 `utils/helper/scatter.ts`, `scatter-chart/src/ui/ScatterChart.ts`에 넣었다가 제거함.
