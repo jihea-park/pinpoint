@@ -1,13 +1,13 @@
-import { ChartOptions } from 'billboard.js/canvas';
 import { InspectorAgentDataSourceChart } from '@pinpoint-fe/ui/src/constants';
-import { useChartAxis } from './useChartAxis';
 import { useChartType } from './useChartType';
-import { DEFAULT_CHART_CONFIG } from './useChartConfig';
-import { getFormat } from '@pinpoint-fe/ui/src/utils';
-import { useDataSourceChartTooltip } from './useDataSourceChartTooltip';
+import { InspectorChartOptions, InspectorSeriesOption } from './useChartConfig';
+import { AxisTooltipParam } from './useChartTooltip';
+import { DataSourceTooltipRow, useDataSourceChartTooltip } from './useDataSourceChartTooltip';
+
+// Agent DataSource 차트의 커스텀 tooltip 이 렌더링되는 외부 요소 id.
+export const DATA_SOURCE_TOOLTIP_ID = 'dataSourceTooltip';
 
 export const useDataSourceChartConfig = (data?: InspectorAgentDataSourceChart.Response | null) => {
-  const { chartUnitAxisInfo, getDataAxis } = useChartAxis();
   const { getTooltipData, getTooltipStr, tooltipTitleList } = useDataSourceChartTooltip(
     data?.metricValueGroups,
   );
@@ -27,72 +27,52 @@ export const useDataSourceChartConfig = (data?: InspectorAgentDataSourceChart.Re
     }),
   };
 
-  const chartDataOptions = chartData.metricValues.reduce(
-    (acc, { fieldName, chartType, unit, dataLabel }) => {
-      return {
-        types: {
-          ...acc.types,
-          [fieldName]: getChartType(chartType),
-        },
-        axes: {
-          ...acc.axes,
-          [fieldName]: getDataAxis(unit),
-        },
-        names: {
-          ...acc.names,
-          [fieldName]: dataLabel,
-        },
+  const unit = chartData.metricValues[0]?.unit ?? '';
+
+  const seriesOptions = chartData.metricValues.reduce<Record<string, InspectorSeriesOption>>(
+    (acc, { fieldName, chartType, unit: fieldUnit, dataLabel }) => {
+      acc[fieldName] = {
+        ...getChartType(chartType),
+        unit: fieldUnit,
+        name: dataLabel,
       };
+      return acc;
     },
-    {
-      types: {},
-      axes: {},
-      names: {},
-    },
+    {},
   );
 
-  const chartOptions: ChartOptions = {
-    data: chartDataOptions,
-    axis: Object.entries(chartUnitAxisInfo).reduce((acc, [unit, axisName]) => {
-      return {
-        ...acc,
-        [axisName]: {
-          label: {
-            text: 'Active Avg',
-            position: 'outer-middle',
-          },
-          tick: {
-            format: getFormat(unit),
-          },
-          show: true,
-          padding: {
-            bottom: 0,
-          },
-          min: 0,
-          default: [0, DEFAULT_CHART_CONFIG.DEFAULT_MAX],
-        },
-      };
-    }, {}),
-    legend: {
-      show: false,
-    },
-    tooltip: {
-      contents: (d, defaultTitleFormat, _, color) => {
-        const focusIndex = d[0].index;
-        const titleList = [defaultTitleFormat(d[0].x) as string, ...tooltipTitleList];
-        const tooltipData = d.map(({ id, name }) => {
-          return {
-            id,
-            values: getTooltipData(focusIndex),
-            color: color(id),
-            name,
-          };
-        });
-        const tooltipStr = getTooltipStr(titleList, tooltipData);
-        document.querySelector('#dataSourceTooltip')!.innerHTML = tooltipStr;
-        return '';
-      },
-    },
+  // 커스텀 tooltip: 모든 database group 의 값을 표로 만들어 외부 요소(#dataSourceTooltip)에 그린다.
+  // floating tooltip 을 쓰지 않으므로 formatter 는 부수효과 후 빈 문자열을 반환한다.
+  const tooltipFormatter = (params: AxisTooltipParam[]) => {
+    const element =
+      typeof document !== 'undefined' && document.querySelector(`#${DATA_SOURCE_TOOLTIP_ID}`);
+    if (!element || !Array.isArray(params) || params.length === 0) return '';
+
+    const focusIndex = params[0].dataIndex ?? 0;
+    const colorBySeriesIndex: Record<number, string | undefined> = {};
+    params.forEach((param) => {
+      if (typeof param.seriesIndex === 'number') {
+        colorBySeriesIndex[param.seriesIndex] = param.color;
+      }
+    });
+
+    const values = getTooltipData(focusIndex);
+    const rows: DataSourceTooltipRow[] = chartData.metricValues.map((metricValue, index) => ({
+      name: metricValue.dataLabel,
+      color: colorBySeriesIndex[index],
+      values: values[index] ?? {},
+    }));
+
+    element.innerHTML = getTooltipStr(['', ...tooltipTitleList], rows);
+    return '';
+  };
+
+  const chartOptions: InspectorChartOptions = {
+    seriesOptions,
+    yAxis: [{ unit, name: 'Active Avg' }],
+    // billboard 에서 dataSource 차트는 tooltip.linked 를 쓰지 않았으므로 그룹에 넣지 않는다.
+    legendShow: false,
+    tooltipFormatter,
   };
 
   return { chartData, chartOptions };

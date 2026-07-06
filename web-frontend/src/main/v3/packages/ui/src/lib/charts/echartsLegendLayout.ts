@@ -8,7 +8,7 @@ export const LEGEND_ITEM_GAP = 15; // legend.itemGap
 const LEGEND_PADDING = 5; // legend 기본 좌우 padding
 const LEGEND_ROW_HEIGHT = 20; // legend 한 줄 높이
 const X_AXIS_LABEL_HEIGHT = 38; // x축 2줄(날짜/시간) 라벨 높이 + 여백
-const BOTTOM_GAP = 12; // x축 라벨과 legend 사이 간격
+const BOTTOM_GAP = 4; // x축 라벨과 legend 사이 간격
 
 const measureCanvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
 const measureCtx = measureCanvas?.getContext('2d') ?? null;
