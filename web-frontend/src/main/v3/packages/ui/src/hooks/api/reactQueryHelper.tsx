@@ -70,7 +70,7 @@ export interface QueryFnOptions {
    * 이 요청이 조회할 service. 지정하면 `pServiceName` 헤더를 여기서 직접 싣고,
    * fetch 인터셉터는 이미 실린 헤더를 덮어쓰지 않는다.
    *
-   * 화면의 service와 조회 대상의 service가 다를 때 쓴다(`useServerMapTargetServiceName`).
+   * 어떤 service로 나가야 하는지는 map 화면이 `useServerMapRequestServiceName`으로 정한다.
    * 인터셉터는 경로/전역 선택값만 보므로 "고른 노드가 다른 service 소속"이라는 사실을 알 수 없다.
    *
    * 이 값을 싣는 훅은 queryKey에도 같은 값을 넣어야 한다. 헤더만 갈리고 캐시 키가 같으면

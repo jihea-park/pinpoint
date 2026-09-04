@@ -53,7 +53,7 @@ export const useActiveThreadSocket = (target?: ActiveThreadTarget) => {
           // 키 이름은 백엔드가 정한 것을 그대로 쓴다
           // (ActiveThreadCountHandler의 SERVICE_NAME_KEY / SERVICE_TYPE_NAME_KEY).
           // enableServiceMap이 꺼져 있으면 serviceName이 undefined로 들어오므로
-          // (useServerMapTargetServiceName이 한 곳에서 막는다) 파라미터도 붙지 않는다.
+          // (useServerMapRequestServiceName이 한 곳에서 막는다) 파라미터도 붙지 않는다.
           // 설정이 꺼진 저장소에는 지금까지와 똑같은 요청이 나간다(백엔드도 DEFAULT로 해석한다).
           ...(target.serviceName
             ? { serviceName: target.serviceName, serviceTypeName: target.serviceType }

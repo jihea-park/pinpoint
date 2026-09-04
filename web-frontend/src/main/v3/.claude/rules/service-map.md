@@ -151,8 +151,9 @@ A로 나가면 백엔드가 A service에서 `b-1`을 찾으므로 데이터가 �
 
 ### 전달은 prop으로 한다
 
-`useServerMapTargetServiceName`이 고른 대상의 service를 읽고, 우측 패널의 컴포넌트들에
-`serviceName` prop으로 내려준다. 받은 컴포넌트는 조회 훅과 링크 생성에 그 값을 쓴다.
+`useServerMapRequestServiceName`이 이 조회에 실을 service를 정하고, 우측 패널의 컴포넌트들에
+`serviceName` prop으로 내려준다. **고른 대상이 있으면 그 대상의 service
+(`useServerMapTargetServiceName`), 아직 없으면 화면의 service다.** 받은 컴포넌트는 조회 훅과 링크 생성에 그 값을 쓴다.
 **prop을 받지 않으면 화면의 service로 조회한다**(`serviceName ?? useServiceNameForLink()`).
 그래서 filteredMap·inspector처럼 이 값을 넘기지 않는 화면은 동작이 그대로다.
 
@@ -160,6 +161,12 @@ A로 나가면 백엔드가 A service에서 `b-1`을 찾으므로 데이터가 �
   링크는 자기 service가 없어 출발지 노드의 service를 쓴다(링크 통계의 기준 application과 같다).
 - `enableServiceMap`이 꺼져 있으면 `useServerMapTargetServiceName`이 undefined를 반환한다.
   설정이 꺼진 저장소로 헤더가 새어 나가지 않도록 **그 한 곳에서** 막는다.
+- **폴백을 빼고 대상의 service를 그대로 내려주면 진입할 때마다 조회가 두 번씩 나간다.** map
+  응답이 오기 전에는 고른 대상이 없어 값이 `undefined`인데, 그동안에도 우측 패널은 경로의
+  application으로 이미 조회를 시작한다. 응답이 와서 기준 노드가 잡히는 순간 값이
+  `undefined → 화면의 service`로 바뀌고, 그 값이 queryKey에 들어 있어(헤더와 같은 값이어야
+  하므로) 캐시에 없는 키가 되어 같은 URL·같은 헤더로 한 번 더 나간다. 처음부터 화면의 service를
+  쓰면 대상이 정해져도 키가 그대로다(같은 service의 노드를 고른 경우 — 대부분이 여기다).
 - **prop을 내려주는 곳을 빠뜨리면 그 차트만 조용히 화면의 service로 조회한다.** 화면은 멀쩡히
   그려지고 숫자만 비어서, 타입 검사로도 잡히지 않는다. 우측 패널에 조회하는 컴포넌트를 새로
   추가하면 `serviceName`도 함께 내려야 한다.
@@ -281,6 +288,7 @@ servermap/filteredMap 응답에는 이 필드가 없어 그 화면들의 동작�
 | 경로 분해 (로더용) | `utils/helper/application.ts` (`parseServiceScopedPath`) |
 | 경로 만들기 | `utils/helper/route.ts` (`getServiceMapPath`, `getServiceMapRealtimePath`, `getFilteredMapPath`, `getTransactionListPath`) |
 | 조회 대상의 service | `hooks/serverMap/useServerMapTargetServiceName.ts` |
+| 조회에 실을 service (대상 → 화면 폴백) | `hooks/serverMap/useServerMapRequestServiceName.ts` |
 | 요청 헤더 주입 | `hooks/api/serviceNameFetchInterceptor.ts` |
 | service 단위 캐시 키 | `hooks/api/reactQueryHelper.tsx` (`serviceScopedQueryKeyHashFn`) |
 | service 변경 시 초기화 | `hooks/utility/useClearApplicationOnServiceChange.ts` |

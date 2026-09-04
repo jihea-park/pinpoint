@@ -19,11 +19,7 @@ import {
   ChartsBoardHeader,
 } from '@pinpoint-fe/ui/src/components';
 import { ApplicationType, GetServerMap } from '@pinpoint-fe/ui/src/constants';
-import {
-  useExperimentals,
-  useServerMapSearchParameters,
-  useServiceNameForLink,
-} from '@pinpoint-fe/ui/src/hooks';
+import { useExperimentals, useServerMapSearchParameters } from '@pinpoint-fe/ui/src/hooks';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 import { PiArrowSquareOut } from 'react-icons/pi';
 import {
@@ -41,7 +37,7 @@ import { cn } from '@pinpoint-fe/ui/src/lib';
 import { RxChevronRight } from 'react-icons/rx';
 import { ServerListForCommon } from '@pinpoint-fe/ui/src/components/ServerList/ServerListForCommon';
 import { useGetHistogramStatistics } from '@pinpoint-fe/ui/src/hooks/api/useGetHistogramStatistics';
-import { useServerMapTargetServiceName } from '@pinpoint-fe/ui/src/hooks/serverMap/useServerMapTargetServiceName';
+import { useServerMapRequestServiceName } from '@pinpoint-fe/ui/src/hooks/serverMap/useServerMapRequestServiceName';
 
 export interface ServerMapChartsBoardProps extends ServerMapChartsBoardFetcherProps {}
 
@@ -114,14 +110,13 @@ export const ServerMapChartsBoardFetcher = ({
 
   // servicemap은 다른 service의 application도 함께 그린다. 그런 노드를 고르면 이 패널의 조회는
   // 화면의 service가 아니라 그 노드의 service로 나가야 한다. 아래 차트/목록에 prop으로 내려준다.
+  // (아직 아무것도 고르지 않은 동안은 화면의 service다. 값이 도중에 바뀌면 queryKey가 갈려
+  //  같은 조회가 한 번 더 나간다 — `useServerMapRequestServiceName` 참고.)
   //
   // 대상이 다른 service면 경로의 application(화면 service 소속)은 통계 조회의 기준이 될 수 없다.
   // 요청이 노드의 service로 나가므로 백엔드가 그 이름을 노드의 service에서 찾게 되기 때문이다.
   // 그때는 노드 자신을 기준으로 삼는다 — 그 application을 직접 열어 본 것과 같은 결과가 된다.
-  const targetServiceName = useServerMapTargetServiceName();
-  const screenServiceName = useServiceNameForLink();
-  const isCrossServiceTarget =
-    !!targetServiceName && !!screenServiceName && targetServiceName !== screenServiceName;
+  const { requestServiceName, isCrossServiceTarget } = useServerMapRequestServiceName();
 
   const baseApplication = isCrossServiceTarget
     ? selectedTargetApplication
@@ -135,7 +130,7 @@ export const ServerMapChartsBoardFetcher = ({
     linkKey: (currentTargetData as GetServerMap.LinkData)?.linkKey,
     fallbackApplication: selectedTargetApplication,
     ignorePathApplication: isCrossServiceTarget,
-    serviceName: targetServiceName,
+    serviceName: requestServiceName,
   });
 
   React.useEffect(() => {
@@ -316,18 +311,18 @@ export const ServerMapChartsBoardFetcher = ({
                       <div className="h-7">
                         <ApdexScore
                           nodeData={(currentTargetData as GetServerMap.NodeData) || application}
-                          serviceName={targetServiceName}
+                          serviceName={requestServiceName}
                         />
                       </div>
                       {chartType === 'scatter' ? (
                         <ScatterChart
                           node={(serverMapCurrentTarget || application) as CurrentTarget}
-                          serviceName={targetServiceName}
+                          serviceName={requestServiceName}
                         />
                       ) : (
                         <Heatmap
                           nodeData={(currentTargetData as GetServerMap.NodeData) || application}
-                          serviceName={targetServiceName}
+                          serviceName={requestServiceName}
                         />
                       )}
                     </div>
@@ -363,7 +358,7 @@ export const ServerMapChartsBoardFetcher = ({
             <img src={serverMapCurrentTarget?.imgPath} width={52} />
             <div className="truncate">{serverMapCurrentTarget?.applicationName}</div>
           </div>
-          <ServerListForCommon nodeStatistics={data} serviceName={targetServiceName} />
+          <ServerListForCommon nodeStatistics={data} serviceName={requestServiceName} />
         </div>
         <div style={{ width: currentPanelWidth }}>
           <ChartsBoard
@@ -388,7 +383,7 @@ export const ServerMapChartsBoardFetcher = ({
                       <ApdexScore
                         nodeData={currentTargetData as GetServerMap.NodeData}
                         agentId={currentServer?.agentId}
-                        serviceName={targetServiceName}
+                        serviceName={requestServiceName}
                       />
                     )}
                   </div>
@@ -399,7 +394,7 @@ export const ServerMapChartsBoardFetcher = ({
                     }
                     range={[dateRange.from.getTime(), dateRange.to.getTime()]}
                     selectedAgentId={currentServer?.agentId || ''}
-                    serviceName={targetServiceName}
+                    serviceName={requestServiceName}
                   />
                   {isScatterDataOutdated && (
                     <div className="absolute top-0 left-0 z-1000 flex flex-col items-center justify-center w-full h-[calc(100%+48px)] bg-background/50 text-center">

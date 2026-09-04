@@ -21,8 +21,8 @@ import {
   ChartTypeButtons,
 } from '..';
 import {
+  useServerMapRequestServiceName,
   useServerMapSearchParameters,
-  useServerMapTargetServiceName,
   useTabFocus,
 } from '@pinpoint-fe/ui/src/hooks';
 import {
@@ -117,7 +117,8 @@ export const Realtime = ({ MapView = ServerMap, requiresApplication = true }: Re
   const { currentPanelWidth, resizeHandleWidth } = useLayoutWithHorizontalResizable();
   // servicemap 실시간 보기에서는 다른 service의 노드도 고를 수 있다. 우측 패널의 조회는
   // 화면의 service가 아니라 고른 노드의 service로 나가야 한다. 차트들에 prop으로 내려준다.
-  const targetServiceName = useServerMapTargetServiceName();
+  // (아직 고른 노드가 없는 동안은 화면의 service다 — `useServerMapRequestServiceName`.)
+  const { requestServiceName } = useServerMapRequestServiceName();
 
   return (
     <div ref={containerRef} className="relative flex flex-1 h-full overflow-x-hidden">
@@ -137,7 +138,7 @@ export const Realtime = ({ MapView = ServerMap, requiresApplication = true }: Re
             <ResizablePanel id="chart" minSize={10} maxSize={90} className="overflow-auto!">
               {isFocus && (
                 <ErrorBoundary>
-                  <AgentActiveThreadFetcher serviceName={targetServiceName} />
+                  <AgentActiveThreadFetcher serviceName={requestServiceName} />
                 </ErrorBoundary>
               )}
             </ResizablePanel>
@@ -206,21 +207,21 @@ export const Realtime = ({ MapView = ServerMap, requiresApplication = true }: Re
                       <ApdexScore
                         shouldPoll={true}
                         nodeData={currentTargetData || application}
-                        serviceName={targetServiceName}
+                        serviceName={requestServiceName}
                       ></ApdexScore>
                     </div>
                     {chartType === 'scatter' ? (
                       <ScatterChart
                         node={serverMapCurrentTarget || (application as ApplicationType)}
                         realtime={true}
-                        serviceName={targetServiceName}
+                        serviceName={requestServiceName}
                       />
                     ) : (
                       // <div className="w-full pl-3 pt-5 pr-10 pb-8 aspect-[1.3]">
                       <Heatmap
                         nodeData={currentTargetData || (application as ApplicationType)}
                         realtime={true}
-                        serviceName={targetServiceName}
+                        serviceName={requestServiceName}
                       />
                       // </div>
                     )}

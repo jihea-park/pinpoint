@@ -32,7 +32,7 @@ export interface AgentActiveThreadFetcherProps {
    * 조회 대상 노드가 소속된 service.
    *
    * servicemap은 다른 service의 노드도 함께 그리므로, 조회는 화면의 service가 아니라 고른
-   * 노드의 service로 나가야 한다. 값은 `useServerMapTargetServiceName`에서 오고, 그 훅이
+   * 노드의 service로 나가야 한다. 값은 `useServerMapRequestServiceName`에서 오고, 그 훅이
    * `enableServiceMap`이 꺼져 있으면 undefined를 돌려주므로 설정이 꺼진 저장소에서는 항상
    * undefined다.
    */
